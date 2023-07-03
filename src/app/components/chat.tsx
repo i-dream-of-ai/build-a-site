@@ -52,7 +52,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       id,
       body: {
         id:conversation?._id,
-        model: conversation?.model || OpenAIModels['gpt-4-0613']
+        model: conversation?.model || OpenAIModels['gpt-3.5-turbo-0613']
       },
       onResponse(response) {
         if (response.status !== 200) {
@@ -84,7 +84,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         body: JSON.stringify({
           id:conversation?._id,
           messages,
-          model: OpenAIModels['gpt-4-0613'],
+          model: OpenAIModels['gpt-3.5-turbo-0613'],
           userId: user?._id
         })
     })
@@ -223,7 +223,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           </div>  
         )}
       </div>
-
+        
       <ChatPanel
         id={id}
         isLoading={isLoading}

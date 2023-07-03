@@ -53,20 +53,23 @@ export function ChatPanel({
             )
           )}
         </div>
-        <div className="space-y-4 bg-background px-4 py-2 shadow-lg rounded-xl sm:border md:py-4 mb-4 bg-black">
-          <PromptForm
-            onSubmit={async value => {
-              await append({
-                id,
-                content: value,
-                role: 'user'
-              })
-            }}
-            input={input}
-            setInput={setInput}
-            isLoading={isLoading}
-          />
-        </div>
+        {messages && messages.length ? (
+          <div className="space-y-4 bg-background px-4 py-2 shadow-lg rounded-xl sm:border md:py-4 mb-4 bg-black">
+            <PromptForm
+              onSubmit={async value => {
+                await append({
+                  id,
+                  content: value,
+                  role: 'user'
+                })
+              }}
+              input={input}
+              setInput={setInput}
+              isLoading={isLoading}
+            />
+          </div>
+        ) :""}
+        
       </div>
     </div>
   )
