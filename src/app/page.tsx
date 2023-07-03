@@ -2,6 +2,7 @@ import { getServerSession } from 'next-auth'
 import Link from 'next/link'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { LoginButton, RegisterButton } from '@/ui/nav-buttons'
+import AlienInvasion from "@/ui/alien-invasion"
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
@@ -25,16 +26,21 @@ export default async function Page() {
             </Link>
           </div>
         ) : (
-          <div className="space-y-3">
-            <p className="mb-2">Have an account? </p>
+          <div className="flex flex-col sm:flex-row items-center justify-between max-w-lg gap-3 mx-auto">
+            <div>
+              <p className="mb-2">Have an account? </p>
+              <LoginButton text="Sign In" />
+            </div>
 
-            <LoginButton text="Sign In" />
-
-            <p className="mb-2">Need an account? </p>
-            <RegisterButton />
+            <div>
+              <p className="mb-2">Need an account? </p>
+              <RegisterButton />
+            </div>
           </div>
         )}
       </div>
+      <AlienInvasion />
+
     </div>
   )
 }
