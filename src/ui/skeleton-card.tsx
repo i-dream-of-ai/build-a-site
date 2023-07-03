@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import clsx from 'clsx'
 
 export const SkeletonCard = ({ isLoading }: { isLoading?: boolean }) => (
   <div
@@ -13,4 +13,4 @@ export const SkeletonCard = ({ isLoading }: { isLoading?: boolean }) => (
       <div className="h-3 w-8/12 rounded-lg bg-gray-700" />
     </div>
   </div>
-);
+)

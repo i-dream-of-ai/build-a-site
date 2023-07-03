@@ -26,7 +26,7 @@ export function ChatPanel({
   reload,
   input,
   setInput,
-  messages
+  messages,
 }: ChatPanelProps) {
   return (
     <div className="fixed inset-x-0 bottom-0 bg-gradient-to-b from-muted/10 from-10% to-muted/30 to-50%">
@@ -34,10 +34,7 @@ export function ChatPanel({
       <div className="mx-auto sm:max-w-2xl sm:px-4">
         <div className="flex h-10 items-center justify-center">
           {isLoading ? (
-            <button
-              onClick={() => stop()}
-              className="bg-background"
-            >
+            <button onClick={() => stop()} className="bg-background">
               <IconHandStop className="mr-2" />
               Stop generating
             </button>
@@ -56,11 +53,11 @@ export function ChatPanel({
         {messages && messages.length ? (
           <div className="space-y-4 bg-background px-4 py-2 shadow-lg rounded-xl sm:border md:py-4 mb-4 bg-black">
             <PromptForm
-              onSubmit={async value => {
+              onSubmit={async (value) => {
                 await append({
                   id,
                   content: value,
-                  role: 'user'
+                  role: 'user',
                 })
               }}
               input={input}
@@ -68,8 +65,9 @@ export function ChatPanel({
               isLoading={isLoading}
             />
           </div>
-        ) :""}
-        
+        ) : (
+          ''
+        )}
       </div>
     </div>
   )

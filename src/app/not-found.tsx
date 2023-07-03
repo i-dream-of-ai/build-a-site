@@ -1,4 +1,4 @@
-import { Boundary } from '@/ui/boundary';
+import { Boundary } from '@/ui/boundary'
 
 export default function NotFound() {
   return (
@@ -9,5 +9,5 @@ export default function NotFound() {
         <p className="text-sm">Could not find requested resource</p>
       </div>
     </Boundary>
-  );
+  )
 }

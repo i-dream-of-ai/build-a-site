@@ -39,7 +39,7 @@ export const programmingLanguages: languageMap = {
   shell: '.sh',
   sql: '.sql',
   html: '.html',
-  css: '.css'
+  css: '.css',
   // add more file extensions here, make sure the key is same as language prop in CodeBlock.tsx component
 }
 
@@ -62,7 +62,7 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
     const fileExtension = programmingLanguages[language] || '.file'
     const suggestedFileName = `file-${generateRandomString(
       3,
-      true
+      true,
     )}${fileExtension}`
     const fileName = window.prompt('Enter file name' || '', suggestedFileName)
 
@@ -101,7 +101,6 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
             <span className="sr-only">Download</span>
           </button>
           <button
-            
             className="text-xs hover:bg-zinc-800 focus-visible:ring-1 focus-visible:ring-slate-700 focus-visible:ring-offset-0"
             onClick={onCopy}
           >
@@ -119,13 +118,13 @@ const CodeBlock: FC<Props> = memo(({ language, value }) => {
           margin: 0,
           width: '100%',
           background: 'transparent',
-          padding: '1.5rem 1rem'
+          padding: '1.5rem 1rem',
         }}
         codeTagProps={{
           style: {
             fontSize: '0.9rem',
-            fontFamily: 'var(--font-mono)'
-          }
+            fontFamily: 'var(--font-mono)',
+          },
         }}
       >
         {value}

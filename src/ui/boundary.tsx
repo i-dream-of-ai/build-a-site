@@ -1,14 +1,14 @@
-import clsx from 'clsx';
-import React from 'react';
+import clsx from 'clsx'
+import React from 'react'
 
 const Label = ({
   children,
   animateRerendering,
   color,
 }: {
-  children: React.ReactNode;
-  animateRerendering?: boolean;
-  color?: 'default' | 'pink' | 'blue' | 'violet' | 'cyan' | 'orange';
+  children: React.ReactNode
+  animateRerendering?: boolean
+  color?: 'default' | 'pink' | 'blue' | 'violet' | 'cyan' | 'orange'
 }) => {
   return (
     <div
@@ -24,8 +24,8 @@ const Label = ({
     >
       {children}
     </div>
-  );
-};
+  )
+}
 export const Boundary = ({
   children,
   labels = ['children'],
@@ -33,11 +33,11 @@ export const Boundary = ({
   color = 'default',
   animateRerendering = true,
 }: {
-  children: React.ReactNode;
-  labels?: string[];
-  size?: 'small' | 'default';
-  color?: 'default' | 'pink' | 'blue' | 'violet' | 'cyan' | 'orange';
-  animateRerendering?: boolean;
+  children: React.ReactNode
+  labels?: string[]
+  size?: 'small' | 'default'
+  color?: 'default' | 'pink' | 'blue' | 'violet' | 'cyan' | 'orange'
+  animateRerendering?: boolean
 }) => {
   return (
     <div
@@ -72,11 +72,11 @@ export const Boundary = ({
             >
               {label}
             </Label>
-          );
+          )
         })}
       </div>
 
       {children}
     </div>
-  );
-};
+  )
+}

@@ -1,33 +1,44 @@
 interface Feature {
-    title: string;
-    content: string;
+  title: string
+  content: string
 }
-  
+
 interface FeaturesSectionProps {
-    featureSectionTagline: string;
-    featureSectionTitle: string;
-    featureSectionContent: string;
-    featureImageURL: string;
-    features: Feature[];
-    colors: {
-      "mainTextColor": string,
-      "secondaryTextColor": string,
-      "mainBackgroundColor": string,
-      "secondaryBackgroundColor": string
-    }
+  featureSectionTagline: string
+  featureSectionTitle: string
+  featureSectionContent: string
+  featureImageURL: string
+  features: Feature[]
+  colors: {
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
+  }
 }
-  
-export function generateFeaturesSection({ featureImageURL, featureSectionTagline, featureSectionTitle, featureSectionContent, features, colors }: FeaturesSectionProps): string {
-    const featureHTML = features.map(feature => `
+
+export function generateFeaturesSection({
+  featureImageURL,
+  featureSectionTagline,
+  featureSectionTitle,
+  featureSectionContent,
+  features,
+  colors,
+}: FeaturesSectionProps): string {
+  const featureHTML = features
+    .map(
+      (feature) => `
       <div class="relative pl-9">
         <dt class="inline font-semibold text-gray-900">
           ${feature.title}
         </dt>
         <dd class="inline">${feature.content}</dd>
       </div>
-    `).join('');
-  
-    return `
+    `,
+    )
+    .join('')
+
+  return `
     <section class="overflow-hidden bg-white py-24 sm:py-32" id="features">
       <div class="mx-auto max-w-6xl md:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-x-8 gap-y-16 sm:gap-y-20 lg:grid-cols-2 lg:items-start">
@@ -56,5 +67,5 @@ export function generateFeaturesSection({ featureImageURL, featureSectionTagline
       </div>
     </section>
   
-    `;
-}  
+    `
+}

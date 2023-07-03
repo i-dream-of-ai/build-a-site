@@ -1,15 +1,22 @@
-import { S3Client, PutObjectCommand, CreateBucketCommand, PutBucketPolicyCommand, PutPublicAccessBlockCommand, PutBucketWebsiteCommand} from "@aws-sdk/client-s3";
-import { deleteBucket } from "./delete";
+import {
+  S3Client,
+  PutObjectCommand,
+  CreateBucketCommand,
+  PutBucketPolicyCommand,
+  PutPublicAccessBlockCommand,
+  PutBucketWebsiteCommand,
+} from '@aws-sdk/client-s3'
+import { deleteBucket } from './delete'
 
-const s3Client = new S3Client({ region: process.env.AWS_REGION });
+const s3Client = new S3Client({ region: process.env.AWS_REGION })
 
 export async function createBucket(bucketName: string) {
   const params = {
-    Bucket: bucketName
-  };
+    Bucket: bucketName,
+  }
 
   try {
-    const data = await s3Client.send(new CreateBucketCommand(params));
+    const data = await s3Client.send(new CreateBucketCommand(params))
 
     const publicAccessBlockParams = {
       Bucket: bucketName,
@@ -17,28 +24,30 @@ export async function createBucket(bucketName: string) {
         BlockPublicAcls: false,
         IgnorePublicAcls: false,
         BlockPublicPolicy: false,
-        RestrictPublicBuckets: false
-      }
-    };
+        RestrictPublicBuckets: false,
+      },
+    }
 
     // Set the public access block configuration
-    await s3Client.send(new PutPublicAccessBlockCommand(publicAccessBlockParams));
+    await s3Client.send(
+      new PutPublicAccessBlockCommand(publicAccessBlockParams),
+    )
 
     const websiteParams = {
       Bucket: bucketName,
       WebsiteConfiguration: {
         IndexDocument: {
-          Suffix: 'index.html'
-        }
-      }
-    };
+          Suffix: 'index.html',
+        },
+      },
+    }
 
     // Enable static website hosting
-    await s3Client.send(new PutBucketWebsiteCommand(websiteParams));
+    await s3Client.send(new PutBucketWebsiteCommand(websiteParams))
 
-    return data;
+    return data
   } catch (err) {
-    throw new Error(`Error creating bucket: ${err}`);
+    throw new Error(`Error creating bucket: ${err}`)
   }
 }
 
@@ -46,83 +55,83 @@ export async function setBucketPolicy(bucketName: string) {
   const params = {
     Bucket: bucketName,
     Policy: JSON.stringify({
-      Version: "2012-10-17",
+      Version: '2012-10-17',
       Statement: [
         {
-          Sid: "PublicReadGetObject",
-          Effect: "Allow",
-          Principal: "*",
-          Action: "s3:GetObject",
-          Resource: `arn:aws:s3:::${bucketName}/*`
-        }
-      ]
-    })
-  };
+          Sid: 'PublicReadGetObject',
+          Effect: 'Allow',
+          Principal: '*',
+          Action: 's3:GetObject',
+          Resource: `arn:aws:s3:::${bucketName}/*`,
+        },
+      ],
+    }),
+  }
 
   try {
-    const data = await s3Client.send(new PutBucketPolicyCommand(params));
-    return data;
+    const data = await s3Client.send(new PutBucketPolicyCommand(params))
+    return data
   } catch (err) {
-    throw new Error(`Error setting bucket policy: ${err}`);
+    throw new Error(`Error setting bucket policy: ${err}`)
   }
 }
 
-export async function uploadImagesToS3(images: { [key: string]: string[] }, bucketName: string) {
-
+export async function uploadImagesToS3(
+  images: { [key: string]: string[] },
+  bucketName: string,
+) {
   try {
     for (const [name, base64Images] of Object.entries(images)) {
       for (let i = 0; i < base64Images.length; i++) {
-        const imageBuffer = Buffer.from(base64Images[i], 'base64');
+        const imageBuffer = Buffer.from(base64Images[i], 'base64')
         const params = {
           Bucket: bucketName,
           Key: `${name}-${i}.png`,
           Body: imageBuffer,
           ContentType: 'image/png',
-          CacheControl: 'max-age=3600'
-        };
-        await s3Client.send(new PutObjectCommand(params));
+          CacheControl: 'max-age=3600',
+        }
+        await s3Client.send(new PutObjectCommand(params))
         // Replace the base64 image data in the images object with the S3 URL
-        images[name][i] = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}-${i}.png`;
+        images[name][
+          i
+        ] = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}-${i}.png`
       }
     }
-    return images;
+    return images
   } catch (err) {
-    console.error(`Error: ${err}`);
-    
+    console.error(`Error: ${err}`)
+
     // Delete the bucket
-    const deleteBucketResponse = await deleteBucket(bucketName);
-    console.log('deleteBucketResponse',deleteBucketResponse);
-    
-    throw new Error(`Error uploading images: ${err}`);
+    const deleteBucketResponse = await deleteBucket(bucketName)
+    console.log('deleteBucketResponse', deleteBucketResponse)
+
+    throw new Error(`Error uploading images: ${err}`)
   }
 }
 
 export async function uploadHTMLToS3(html: string, bucketName: string) {
-
   try {
-
     const params = {
       Bucket: bucketName,
       Key: `index.html`,
       Body: html,
       ContentType: 'text/html',
-      CacheControl: 'max-age=3600'
-    };
+      CacheControl: 'max-age=3600',
+    }
 
     // Upload the HTML
-    await s3Client.send(new PutObjectCommand(params));
+    await s3Client.send(new PutObjectCommand(params))
 
-    const websiteUrl = `http://${bucketName}.s3-website.${process.env.AWS_REGION}.amazonaws.com`;
-    return websiteUrl;
-
+    const websiteUrl = `http://${bucketName}.s3-website.${process.env.AWS_REGION}.amazonaws.com`
+    return websiteUrl
   } catch (err) {
-    console.error(`Error: ${err}`);
-    
-    // Delete the HTML object
-    const deleteBucketResponse = await deleteBucket(bucketName);
-    console.log('deleteBucketResponse',deleteBucketResponse);
-    
-    throw new Error(`Error uploading file: ${err}`);
+    console.error(`Error: ${err}`)
 
+    // Delete the HTML object
+    const deleteBucketResponse = await deleteBucket(bucketName)
+    console.log('deleteBucketResponse', deleteBucketResponse)
+
+    throw new Error(`Error uploading file: ${err}`)
   }
 }

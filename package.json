@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "format": "prettier --check --ignore-path .gitignore .",
+    "format:fix": "prettier --write --ignore-path .gitignore ."
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^1.0.0",
@@ -44,6 +46,7 @@
     "eslint": "^8.44.0",
     "eslint-config-next": "^13.4.7",
     "postcss": "^8.4.24",
+    "prettier": "^2.8.8",
     "tailwindcss": "^3.3.2",
     "typescript": "^5.1.6"
   }

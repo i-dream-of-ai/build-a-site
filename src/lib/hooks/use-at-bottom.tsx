@@ -7,7 +7,7 @@ export function useAtBottom(offset = 0) {
     const handleScroll = () => {
       setIsAtBottom(
         window.innerHeight + window.scrollY >=
-          document.body.offsetHeight - offset
+          document.body.offsetHeight - offset,
       )
     }
 

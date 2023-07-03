@@ -1,19 +1,23 @@
 interface TestimonialsSectionProps {
-    testimonial:{
-      name: string;
-      content: string;
-    };
-    testimonialImageURL:string;
-    colors: {
-      "mainTextColor": string,
-      "secondaryTextColor": string,
-      "mainBackgroundColor": string,
-      "secondaryBackgroundColor": string
-    };
+  testimonial: {
+    name: string
+    content: string
+  }
+  testimonialImageURL: string
+  colors: {
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
+  }
 }
-  
-export function generateTestimonialSection({ testimonialImageURL, testimonial, colors }: TestimonialsSectionProps): string {
-    return `
+
+export function generateTestimonialSection({
+  testimonialImageURL,
+  testimonial,
+  colors,
+}: TestimonialsSectionProps): string {
+  return `
       <section class="isolate overflow-hidden bg-white px-6 lg:px-8" id="testimonials">
         <div class="relative mx-auto max-w-2xl py-24 sm:py-32 lg:max-w-4xl">
           <div class="absolute left-1/2 top-0 -z-10 h-[50rem] w-[90rem] -translate-x-1/2 bg-[radial-gradient(50%_100%_at_top,theme(colors.indigo.100),white)] opacity-20 lg:left-36"></div>
@@ -37,5 +41,5 @@ export function generateTestimonialSection({ testimonialImageURL, testimonial, c
           </figure>
         </div>
       </section>
-    `;
-} 
+    `
+}

@@ -1,23 +1,30 @@
-import { Link } from "./html";
+import { Link } from './html'
 
 interface NavbarSectionProps {
-  title: string;
-  navbarItems: Link[];
+  title: string
+  navbarItems: Link[]
   colors: {
-    "mainTextColor": string,
-    "secondaryTextColor": string,
-    "mainBackgroundColor": string,
-    "secondaryBackgroundColor": string
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
   }
 }
 
-export function generateNavbar({ title, navbarItems, colors }: NavbarSectionProps) {
-
-  const itemHTML = navbarItems.map(item => `
+export function generateNavbar({
+  title,
+  navbarItems,
+  colors,
+}: NavbarSectionProps) {
+  const itemHTML = navbarItems
+    .map(
+      (item) => `
     <li class="mr-3">
       <a class="inline-block py-2 px-4 ${colors.mainTextColor} no-underline" href="${item.href}">${item.name}</a>
     </li>
-  `).join('');
+  `,
+    )
+    .join('')
 
   return `
     <nav class="${colors.mainTextColor} ${colors.mainBackgroundColor} p-2 mt-0 w-full">
@@ -34,5 +41,5 @@ export function generateNavbar({ title, navbarItems, colors }: NavbarSectionProp
         </div>
       </div>
     </nav>
-  `;
+  `
 }

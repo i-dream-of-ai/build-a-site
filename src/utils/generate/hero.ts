@@ -1,20 +1,24 @@
 interface HeroSectionProps {
-  title:string;
-  heroTitle: string;
-  heroContent: string;
+  title: string
+  heroTitle: string
+  heroContent: string
   colors: {
-    "mainTextColor": string,
-    "secondaryTextColor": string,
-    "mainBackgroundColor": string,
-    "secondaryBackgroundColor": string,
-    "gradientFromColor": string,
-    "gradientToColor":string
-  };
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
+    gradientFromColor: string
+    gradientToColor: string
+  }
 }
-  
-export function generateHeroSection({ title, heroTitle, heroContent, colors }: HeroSectionProps): string {       
 
-    return `
+export function generateHeroSection({
+  title,
+  heroTitle,
+  heroContent,
+  colors,
+}: HeroSectionProps): string {
+  return `
     <div class="bg-white">
       <header class="absolute inset-x-0 top-0 z-50">
         <nav class="flex items-center justify-between p-6 lg:px-8 mx-auto max-w-6xl" aria-label="Global">
@@ -96,5 +100,5 @@ export function generateHeroSection({ title, heroTitle, heroContent, colors }: H
         document.getElementById('mobile-menu').classList.add('hidden');
       });
     </script>
-    `;
-  }
+    `
+}

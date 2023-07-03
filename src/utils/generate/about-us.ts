@@ -1,17 +1,22 @@
 interface AboutUsSectionProps {
-    title: string;
-    paragraph: string;
-    aboutUsImageURL:string;
-    colors: {
-      "mainTextColor": string,
-      "secondaryTextColor": string,
-      "mainBackgroundColor": string,
-      "secondaryBackgroundColor": string
-    };
+  title: string
+  paragraph: string
+  aboutUsImageURL: string
+  colors: {
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
+  }
 }
-  
-export function generateAboutUsSection({ title, paragraph, colors, aboutUsImageURL }: AboutUsSectionProps): string {
-    return `
+
+export function generateAboutUsSection({
+  title,
+  paragraph,
+  colors,
+  aboutUsImageURL,
+}: AboutUsSectionProps): string {
+  return `
     <div class="relative ${colors.mainBackgroundColor}" id="about-us">
       <div class="relative h-80 overflow-hidden ${colors.secondaryBackgroundColor} md:absolute md:left-0 md:h-full md:w-1/3 lg:w-1/2">
         <img class="h-full w-full object-cover bg-blend-saturation" src="${aboutUsImageURL}" alt="">
@@ -32,5 +37,5 @@ export function generateAboutUsSection({ title, paragraph, colors, aboutUsImageU
         </div>
       </div>
     </div>
-    `;
-}  
+    `
+}

@@ -1,14 +1,14 @@
 interface ContactUsSectionProps {
   colors: {
-    "mainTextColor": string,
-    "secondaryTextColor": string,
-    "mainBackgroundColor": string,
-    "secondaryBackgroundColor": string
-  };
+    mainTextColor: string
+    secondaryTextColor: string
+    mainBackgroundColor: string
+    secondaryBackgroundColor: string
+  }
 }
 
-export function generateContactUsSection({colors}: ContactUsSectionProps) {
-    return `
+export function generateContactUsSection({ colors }: ContactUsSectionProps) {
+  return `
       <section class="w-full ${colors.secondaryBackgroundColor}" id="contact-us">
       <div class="max-w-xl mx-auto px-6 py-12">
         <h2 class="text-4xl font-bold text-center ${colors.secondaryTextColor} mb-8">Contact Us</h2>
@@ -33,6 +33,5 @@ export function generateContactUsSection({colors}: ContactUsSectionProps) {
         </form>
         </div>
       </section>
-    `;
-  }
-  
+    `
+}
