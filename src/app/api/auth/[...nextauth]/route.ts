@@ -9,7 +9,8 @@ declare module 'next-auth' {
     interface Session {
         session:{
             user:User
-        }
+        },
+        authenticated: boolean
     }
     interface User {
         email?: string | null;

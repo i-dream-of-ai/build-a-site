@@ -1,11 +1,11 @@
 "use client"
+
 import { Fragment } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { IconAlien, IconMenu, IconUser, IconX } from '@tabler/icons-react'
-import { signIn, signOut } from 'next-auth/react'
+import { signIn, signOut, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import Image from 'next/image'
 
 const navigation = [
   { name: 'Home', href: '/', current: true },
@@ -13,13 +13,14 @@ const navigation = [
   { name: 'Sites', href: '/sites', current: false },
 ]
 
-function classNames(...classes) {
+function classNames(...classes:any) {
   return classes.filter(Boolean).join(' ')
 }
 
-export default function NavBar({session}) {
+export default function NavBar() {
 
   const pathname = usePathname();
+  const {data} = useSession();
 
   return (
     <Disclosure as="nav" className="bg-black">
@@ -62,7 +63,7 @@ export default function NavBar({session}) {
               </div>
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
 
-                {session && session.authenticated ? 
+                {data && data?.authenticated ? 
 
                 <Menu as="div" className="relative ml-3">
                   <div>
