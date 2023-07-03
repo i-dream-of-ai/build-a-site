@@ -6,6 +6,8 @@ interface ImagePrompt {
     count: number;
     size: string
 }  
+
+export const runtime = 'edge';
   
  export async function createImages(imagePrompts: ImagePrompt[] = []) {
     const imagePromises = imagePrompts.flatMap(({ prompt, count, size }) => {
@@ -17,12 +19,12 @@ interface ImagePrompt {
     });
   
     try {
-      const axiosResponses = await Promise.all(imagePromises);
+      const fetchResponses = await Promise.all(imagePromises);
       const images: { [key: string]: string[] } = {};
       let currentPromptIndex = 0;
       let currentCount = imagePrompts[0].count;
   
-      axiosResponses.forEach((axiosResponse, i) => {
+      fetchResponses.forEach((fetchResponse, i) => {
 
         if (i >= currentCount && currentPromptIndex < imagePrompts.length - 1) {
           currentPromptIndex++;
@@ -34,7 +36,7 @@ interface ImagePrompt {
           if (!images[name]) {
             images[name] = [];
           }
-          const imageData = axiosResponse.data.data[0];
+          const imageData = fetchResponse.data[0];
           if (imageData && imageData.b64_json) {
             images[name].push(imageData.b64_json);
           } else {

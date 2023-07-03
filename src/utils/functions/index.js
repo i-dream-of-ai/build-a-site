@@ -1,4 +1,6 @@
-const { Configuration, OpenAIApi } = require("openai");
+import { Configuration, OpenAIApi } from "openai-edge"
+
+export const runtime = 'edge';
 
 export const generate_site = {
   "name": "generate_site",
@@ -8,7 +10,7 @@ export const generate_site = {
     "properties": {
       "colors": {
         "type": "object",
-        "description": "The main brand colors of the website. Return an object of TailwindCSS colors. Use professional color pallets for brands. The colors should look great together. Only use TailwindCSS colors that exist in the tailwind library. for the gradient colors, use the main background color as the 'from color', and choose a sutiable 'to color' based on the main color. Ask the user what kind of colors they like if they dont tell you. Example { mainTextColor: 'bg-blue-400'} ",
+        "description": "The main brand colors of the website. Return an object of TailwindCSS colors. Use professional color pallets for brands. The colors should look great together. The text color and background color should have good contrast so the text is visible, and fully accessible. Only use TailwindCSS colors that exist in the tailwind library. for the gradient colors, use the main background color as the 'from color', and choose a sutiable 'to color' based on the main color. Ask the user what kind of colors they like if they dont tell you. Example { mainTextColor: 'bg-blue-400'} ",
         "properties": {
           "mainTextColor": { "type": "string" },
           "secondaryTextColor": { "type": "string" },
@@ -94,7 +96,7 @@ export const generate_site = {
       },
       "testimonialImage": { 
         "type": "string",
-        "description": "Return a professional image prompt that will be used with the AI image generator Stable Diffusion. The gender of the image should match the testimonial persons gender. Use the following example as the prompt but change the gender as needed. Always use detailed face, and detailed eyes as part of the prompt. Example: 'photo of young woman, portrait, highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores, detailed face, detailed eyes'" 
+        "description": "Return a professional image prompt that will be used with the AI image generator Dalle-2. The gender of the image should match the testimonial persons gender. Our end goal is a portrait of a customer. Just the face, just one person. Always use detailed face, and detailed eyes as part of the prompt. Please consider the following example the prompt but change the gender as needed. Example: 'photo of young woman, portrait, highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores, detailed face, detailed eyes.'" 
       },
       "copywrite": { 
         "type": "string",
@@ -191,12 +193,19 @@ export async function createDalle2Image(args) {
       apiKey: process.env.OPENAI_API_KEY,
     });
     const openai = new OpenAIApi(configuration);
-    const response = await openai.createImage({
+    const res = await openai.createImage({
       prompt: args.imagePrompt,
       n: args.count,
       size: args.size,
       response_format: 'b64_json'
     });
+
+    const response = await res.json();
+
+    if(!res.ok){
+      console.error('Error during createImage:', response);
+      throw new Error('Error during createImage:', response);
+    }
 
     return response;
 
