@@ -466,7 +466,7 @@ export default function SiteForm({ site }: SiteProps) {
                 {siteData.featureImageURL ? (
                   <div>
                     {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Dalle</button> */}
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '512', '512')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '576', '1024')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
                     <img className='rounded-md' src={siteData.featureImageURL} />
                   </div>
                 ) : (

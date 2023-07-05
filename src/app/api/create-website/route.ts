@@ -66,8 +66,8 @@ export async function POST(req: NextRequest) {
           name: 'featureImage', 
           prompt: heroImagePrompt, 
           count: 1, 
-          height: '512', 
-          width: '512' 
+          height: '576', 
+          width: '1024' 
         },
         {
           generator: 'stable',
