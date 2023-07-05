@@ -14,9 +14,10 @@ import { NextRequest, NextResponse } from 'next/server'
 const dbName = process.env.MONGODB_DB
 
 export async function POST(req: NextRequest) {
+
   const body = await req.json()
 
-  const { title, userId, heroImage, testimonialImage } = body.args
+  const { title, userId, heroImagePrompt, testimonialImagePrompt, aboutUsImagePrompt } = body.args
 
   if (!userId) {
     return NextResponse.json(
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Remove any non-alphanumeric characters from the filename
-  const bucketName = title.replace(/[^a-z0-9]/gi, '').toLowerCase() + userId
+  const bucketName = title.replace(/[^a-z0-9]/gi, '').toLowerCase() +'-'+ userId
 
   const client = await clientPromise
   const collection = client.db(dbName).collection('sites')
@@ -60,18 +61,29 @@ export async function POST(req: NextRequest) {
     try {
       //create the images. this function uses Promise.all
       images = await createImages([
-        { name: 'featureImage', prompt: heroImage, count: 1, size: '512x512' },
-        {
-          name: 'aboutUsImage',
-          prompt: heroImage,
-          count: 1,
-          size: '1024x1024',
+        { 
+          generator: 'stable', 
+          name: 'featureImage', 
+          prompt: heroImagePrompt, 
+          count: 1, 
+          height: '512', 
+          width: '512' 
         },
         {
-          name: 'testimonialImage',
-          prompt: testimonialImage,
+          generator: 'stable',
+          name: 'aboutUsImage',
+          prompt: aboutUsImagePrompt,
           count: 1,
-          size: '512x512',
+          height: '576',
+          width: '1024'
+        },
+        {
+          generator: 'stable',
+          name: 'testimonialImage',
+          prompt: testimonialImagePrompt,
+          count: 1,
+          height: '512',
+          width: '512'
         },
       ])
     } catch (error) {
@@ -104,8 +116,6 @@ export async function POST(req: NextRequest) {
       content: body.args,
       href: href,
     })
-
-    console.log('data', data)
 
     return NextResponse.json(
       { message: 'Website created successfully', url: href },

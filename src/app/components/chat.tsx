@@ -27,6 +27,7 @@ interface Conversation {
 }
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
+
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
@@ -75,7 +76,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
 
     append({
       id: conversation?._id.toString() || '',
-      content: `Hi, I would like to generate a website. Here is some information about my business. Business Name: ${businessName}, Kinds of products we sell: ${productType}, Color information to use:${colorType}`,
+      content: `Hi, I would like to generate a website. Here is some information about my business. Business Name: ${businessName}, Kinds of products we sell: ${productType}, Color information to use: ${colorType}`,
       role: 'user',
     })
   }
@@ -130,12 +131,14 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     }
     if (convoId && !conversation) {
       getConversation(convoId)
+    } else if(!convoId && conversation){
+      setConversation(undefined)
     }
   }, [convoId, conversation])
 
   return (
     <>
-      <div className={cn('pb-[60px] pt-4 md:pt-10', className)}>
+      <div className={cn('pb-[60px] pt-4', className)}>
         {messages.length ? (
           <>
             <ChatList messages={messages} />

@@ -1,15 +1,83 @@
 'use client'
+
 import { IconPhotoAi } from '@tabler/icons-react'
 import { Site } from '@/types/site'
+import React, { useState } from 'react'
+import { Feature } from '@/types/feature'
+import { toast } from 'react-hot-toast'
 
 export interface SiteProps {
   site: Site
 }
 
 export default function SiteForm({ site }: SiteProps) {
-  //console.log(site);
+
+  const [isGeneratingImage, setIsGeneratingImage] = useState(false);
+
+  const [siteData, setSiteData] = useState(site.content);
+
+  const handleInputChange = (index: number, key: keyof Feature, value: string) => {
+    const newFeatures = [...siteData.features];
+    newFeatures[index][key] = value;
+    setSiteData({...siteData, features: newFeatures});
+  };
+
+  const handleFieldChange = (field: string, value: string) => {
+    setSiteData({...siteData, [field]: value});
+  };
+
+
+  async function updateSite(e:any){
+    e.preventDefault();
+
+    // Send the siteData state to the server
+    const response = await fetch(`/api/sites/${site._id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        bucketName:site.bucketName,
+        siteData
+      }),
+    });
+
+    if (!response.ok) {
+      toast.error('Failed to update site');
+    } else {
+      toast.success('Site updated successfully');
+    }
+  }
+
+  async function generateNewImage(generator:string, field: string, prompt: string, height:string, width:string){
+    try {
+      setIsGeneratingImage(true);
+      const res = await fetch(('/api/image'),{
+        method:"POST",
+        body:JSON.stringify({
+          generator,
+          prompt,
+          field, 
+          siteId: site._id,
+          height,
+          width
+        })
+      });
+      const response = await res.json();
+      if(!res.ok){
+        toast.error(response.error)
+        console.log(response)
+      }
+      console.log(response);
+      setIsGeneratingImage(false);
+    } catch (error) {
+      setIsGeneratingImage(false);
+      console.error('generateNewFeatureImage Error: ',error)
+    }
+  }
+
   return (
-    <form>
+    <form onSubmit={updateSite}>
       <div className="space-y-12">
         <div className="border-b border-white/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-white">
@@ -35,7 +103,8 @@ export default function SiteForm({ site }: SiteProps) {
                     name="title"
                     id="title"
                     autoComplete="title"
-                    value={site.content.title}
+                    value={siteData.title}
+                    onChange={(e)=>handleFieldChange('title', e.target.value)}
                     className="flex-1 border-0 bg-transparent p-1.5 text-white focus:ring-0 sm:text-sm sm:leading-6"
                   />
                 </div>
@@ -67,7 +136,8 @@ export default function SiteForm({ site }: SiteProps) {
                     name="heroTitle"
                     id="heroTitle"
                     autoComplete="heroTitle"
-                    value={site.content.heroTitle}
+                    value={siteData.heroTitle}
+                    onChange={(e)=>handleFieldChange('heroTitle', e.target.value)}
                     className="flex-1 border-0 bg-transparent p-1.5 text-white focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="Welcome"
                   />
@@ -87,9 +157,9 @@ export default function SiteForm({ site }: SiteProps) {
                   id="about"
                   name="about"
                   rows={3}
-                  value={site.content.heroContent}
+                  value={siteData.heroContent}
+                  onChange={(e)=>handleFieldChange('heroContent', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
               <p className="mt-3 text-sm leading-6 text-gray-400">
@@ -120,7 +190,8 @@ export default function SiteForm({ site }: SiteProps) {
                   type="text"
                   name="testimonial-name"
                   id="testimonial-name"
-                  value={site.content.testimonial.name}
+                  value={siteData.testimonial.name}
+                  onChange={(e)=>handleFieldChange('testimonalName', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>
@@ -138,9 +209,9 @@ export default function SiteForm({ site }: SiteProps) {
                   id="testimonial-content"
                   name="testimonial-content"
                   rows={3}
-                  value={site.content.testimonial.content}
+                  value={siteData.testimonial.content}
+                  onChange={(e)=>handleFieldChange('testimonalContent', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
             </div>
@@ -157,15 +228,17 @@ export default function SiteForm({ site }: SiteProps) {
                   id="testimonial-prompt"
                   name="testimonial-prompt"
                   rows={3}
-                  value={site.content.testimonialImage}
+                  value={siteData.testimonialImagePrompt}
+                  onChange={(e)=>handleFieldChange('testimonialImagePrompt', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
-                {site.content.testimonialImageURL ? (
+                {siteData.testimonialImageURL ? (
                   <div>
-                    <img src={site.content.testimonialImageURL} />
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Dalle</button>
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Stable Diffusion</button>
+                    <img className='rounded-md' src={siteData.testimonialImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -220,7 +293,8 @@ export default function SiteForm({ site }: SiteProps) {
                     type="text"
                     name="aboutus-title"
                     id="aboutus-title"
-                    value={site.content.aboutUsTitle}
+                    value={siteData.aboutUsTitle}
+                    onChange={(e)=>handleFieldChange('aboutUsTitle', e.target.value)}
                     className="flex-1 border-0 bg-transparent p-1.5 text-white focus:ring-0 sm:text-sm sm:leading-6"
                     placeholder="About Us"
                   />
@@ -240,9 +314,9 @@ export default function SiteForm({ site }: SiteProps) {
                   id="aboutus-content"
                   name="aboutus-content"
                   rows={4}
-                  value={site.content.aboutUsContent}
+                  value={siteData.aboutUsContent}
+                  onChange={(e)=>handleFieldChange('aboutUsContent', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
               <p className="mt-3 text-sm leading-6 text-gray-400">
@@ -262,15 +336,17 @@ export default function SiteForm({ site }: SiteProps) {
                   id="aboutus-image"
                   name="aboutus-image"
                   rows={3}
-                  value={site.content.aboutUsImage}
+                  value={siteData.aboutUsImagePrompt}
+                  onChange={(e)=>handleFieldChange('aboutUsImagePrompt', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
-                {site.content.aboutUsImageURL ? (
+                {siteData.aboutUsImageURL ? (
                   <div>
-                    <img src={site.content.aboutUsImageURL} />
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Dalle</button>
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Stable Diffusion</button>
+                    <img className='rounded-md' src={siteData.aboutUsImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -311,8 +387,8 @@ export default function SiteForm({ site }: SiteProps) {
             You business features.
           </p>
 
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-6">
+          <div className="mt-10 flex flex-col gap-x-6 gap-y-8 ">
+            <div className="w-full">
               <label
                 htmlFor="feature-title"
                 className="block text-sm font-medium leading-6 text-white"
@@ -324,13 +400,14 @@ export default function SiteForm({ site }: SiteProps) {
                   type="text"
                   name="feature-title"
                   id="feature-title"
-                  value={site.content.featureSectionTitle}
+                  value={siteData.featureSectionTitle}
+                  onChange={(e)=>handleFieldChange('featureSectionTitle', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
-            <div className="sm:col-span-6">
+            <div className="w-full">
               <label
                 htmlFor="feature-tagline"
                 className="block text-sm font-medium leading-6 text-white"
@@ -342,13 +419,14 @@ export default function SiteForm({ site }: SiteProps) {
                   type="text"
                   name="feature-tagline"
                   id="feature-tagline"
-                  value={site.content.featureSectionTagline}
+                  value={siteData.featureSectionTagline}
+                  onChange={(e)=>handleFieldChange('featureSectionTagline', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
 
-            <div className="sm:col-span-6">
+            <div className="w-full">
               <label
                 htmlFor="feature-content"
                 className="block text-sm font-medium leading-6 text-white"
@@ -360,14 +438,14 @@ export default function SiteForm({ site }: SiteProps) {
                   id="feature-content"
                   name="feature-content"
                   rows={3}
-                  value={site.content.featureSectionContent}
+                  value={siteData.featureSectionContent}
+                  onChange={(e)=>handleFieldChange('featureSectionContent', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
             </div>
 
-            <div className="col-span-full">
+            <div className="w-full">
               <label
                 htmlFor="cover-photo"
                 className="block text-sm font-medium leading-6 text-white"
@@ -379,15 +457,17 @@ export default function SiteForm({ site }: SiteProps) {
                   id="heroImage"
                   name="heroImage"
                   rows={3}
-                  value={site.content.heroImage}
+                  value={siteData.heroImagePrompt}
+                  onChange={(e)=>handleFieldChange('heroImagePrompt', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                  defaultValue={''}
                 />
               </div>
-              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
-                {site.content.featureImageURL ? (
+              <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 p-6">
+                {siteData.featureImageURL ? (
                   <div>
-                    <img src={site.content.featureImageURL} />
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Dalle</button>
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Stable Diffusion</button>
+                    <img className='rounded-md' src={siteData.featureImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -419,48 +499,48 @@ export default function SiteForm({ site }: SiteProps) {
             </div>
 
             <div className="col-span-6 grid grid-cols-6 gap-4 p-4 rounded-md ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500">
-              {site.content.features.map((feature: any, index: any) => {
-                return (
-                  <>
-                    <div className="sm:col-span-2">
-                      <label
-                        htmlFor={`feature-${index}`}
-                        className="block text-sm font-medium leading-6 text-white"
-                      >
-                        {index + 1}. Feature Title
-                      </label>
-                      <div className="mt-2">
-                        <input
-                          type="text"
-                          name={`feature-${index}`}
-                          id={`feature-${index}`}
-                          value={feature.title}
-                          className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                        />
-                      </div>
-                    </div>
 
-                    <div className="sm:col-span-4">
-                      <label
-                        htmlFor={`feature-content-${index}`}
-                        className="block text-sm font-medium leading-6 text-white"
-                      >
-                        {index + 1}. Feature Content
-                      </label>
-                      <div className="mt-2">
-                        <textarea
-                          id={`feature-content-${index}`}
-                          name={`feature-content-${index}`}
-                          rows={3}
-                          value={feature.content}
-                          className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
-                          defaultValue={''}
-                        />
+                  {site.content.features.map((feature:Feature, index:number) => (
+                    <React.Fragment key={index}>
+                      <div className="col-span-6 sm:col-span-2">
+                        <label
+                          htmlFor={`feature-${index}`}
+                          className="block text-sm font-medium leading-6 text-white"
+                        >
+                          {index + 1}. Feature Title
+                        </label>
+                        <div className="mt-2">
+                          <input
+                            type="text"
+                            name={`feature-${index}`}
+                            id={`feature-${index}`}
+                            value={feature.title}
+                            onChange={(e) => handleInputChange(index, 'title', e.target.value)}
+                            className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                          />
+                        </div>
                       </div>
-                    </div>
-                  </>
-                )
-              })}
+            
+                      <div className="col-span-6 sm:col-span-4">
+                        <label
+                          htmlFor={`feature-content-${index}`}
+                          className="block text-sm font-medium leading-6 text-white"
+                        >
+                          {index + 1}. Feature Content
+                        </label>
+                        <div className="mt-2">
+                          <textarea
+                            id={`feature-content-${index}`}
+                            name={`feature-content-${index}`}
+                            rows={3}
+                            value={feature.content}
+                            onChange={(e) => handleInputChange(index, 'content', e.target.value)}
+                            className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                          />
+                        </div>
+                      </div>
+                    </React.Fragment>
+                  ))}
             </div>
           </div>
         </div>
@@ -487,7 +567,8 @@ export default function SiteForm({ site }: SiteProps) {
                   type="text"
                   name="copywrite"
                   id="copywrite"
-                  value={site.content.copywrite}
+                  value={siteData.copywrite}
+                  onChange={(e)=>handleFieldChange('copywrite', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>

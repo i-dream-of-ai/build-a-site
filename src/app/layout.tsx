@@ -1,6 +1,6 @@
 import '@/styles/globals.css'
 import { Metadata } from 'next'
-import NextAuthProvider from './providers'
+import {NextAuthProvider} from './providers'
 import NavBar from '@/app/components/navbar'
 import { Toaster } from 'react-hot-toast'
 

@@ -45,7 +45,7 @@ export const generate_site = {
         description:
           "Content for the hero section of the website. This should be at least 1 full sentence, and 4 sentences max. It should be optimized to the brands ideal customers. Generate this based on the information you have about the business. Don't ask the user for this.",
       },
-      heroImage: {
+      heroImagePrompt: {
         type: 'string',
         description:
           'Generate a professional detailed image prompt for the hero section. This detailed image prompt will be used with an AI generator like DALLE-2. This prompt should create a highly detailed image that features a professional looking photo of the product of the business, with great lighting. There should never be a person in this image. This prompt should reflect the business branding, and should attract customers to engage with the brand.',
@@ -86,7 +86,7 @@ export const generate_site = {
         description:
           "A paragraph for the feature section content of the website. It should be professional. Generate this based on the information you have about the business. Don't ask the user for this.",
       },
-      aboutUsImage: {
+      aboutUsImagePrompt: {
         type: 'string',
         description:
           'Professional detailed image prompt that will used to generate an image for the about us section. Return a professional image prompt that will be used with an AI generator like DALLE-2. This prompt should reflect the business branding by showing a product of the company, and should attract customers to engage with the brand. There should never be a person in this image. The image generated should be products of the business.',
@@ -119,10 +119,10 @@ export const generate_site = {
         },
         required: ['name', 'content'],
       },
-      testimonialImage: {
+      testimonialImagePrompt: {
         type: 'string',
         description:
-          "Return a professional image prompt that will be used with the AI image generator Dalle-2. The gender of the image should match the testimonial persons gender. Our end goal is a portrait of a customer. Just the face, just one person. Always use detailed face, and detailed eyes as part of the prompt. Please consider the following example the prompt but change the gender as needed. Example: 'photo of young woman, portrait, highlight hair, sitting outside restaurant, wearing dress, rim lighting, studio lighting, looking at the camera, dslr, ultra quality, sharp focus, tack sharp, dof, film grain, Fujifilm XT3, crystal clear, 8K UHD, highly detailed glossy eyes, high detailed skin, skin pores, detailed face, detailed eyes.'",
+          "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic close up portrait ((female)) DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       copywrite: {
         type: 'string',
@@ -134,15 +134,15 @@ export const generate_site = {
       'title',
       'heroTitle',
       'heroContent',
-      'heroImage',
+      'heroImagePrompt',
       'featureSectionTagline',
       'featureSectionTitle',
       'featureSectionContent',
       'features',
-      'aboutUsImage',
+      'aboutUsImagePrompt',
       'aboutUsTitle',
       'aboutUsContent',
-      'testimonialImage',
+      'testimonialImagePrompt',
       'testimonial',
       'copywrite',
     ],
@@ -196,11 +196,11 @@ export async function createStableDiffusionImage(args) {
         },
         body: JSON.stringify({
           key: process.env.STABLE_DIFFUSION_KEY,
-          prompt: args.imagePrompt,
-          negative_prompt: args.negativePrompt,
+          prompt: args.prompt,
+          negative_prompt: args.negativePrompt || 'sex, nude, breasts, butt, tits, sexy, naked',
           width: args.width ? args.width : '1024',
           height: args.height ? args.height : '576',
-          samples: args.count,
+          samples: args.count || 1,
           num_inference_steps: '20',
           seed: null,
           guidance_scale: '7.5',
@@ -235,7 +235,7 @@ export async function createDalle2Image(args) {
     })
     const openai = new OpenAIApi(configuration)
     const res = await openai.createImage({
-      prompt: args.imagePrompt,
+      prompt: args.prompt,
       n: args.count,
       size: args.size,
       response_format: 'b64_json',

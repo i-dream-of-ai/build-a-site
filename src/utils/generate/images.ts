@@ -1,23 +1,36 @@
-import { createDalle2Image } from '../functions'
+import { createDalle2Image, createStableDiffusionImage } from '../functions'
 
 interface ImagePrompt {
+  generator: string
   name: string
   prompt: string
   count: number
-  size: string
+  width?: string,
+  height?: string
 }
 
 export const runtime = 'edge'
 
 export async function createImages(imagePrompts: ImagePrompt[] = []) {
-  const imagePromises = imagePrompts.flatMap(({ prompt, count, size }) => {
-    return Array.from({ length: count }, () =>
-      createDalle2Image({
-        imagePrompt: prompt,
-        count: 1,
-        size: size,
-      }),
-    )
+  const imagePromises = imagePrompts.flatMap(({ generator, prompt, count, width = '1024', height = '576'}) => {
+    if(generator === 'dalle'){
+      return Array.from({ length: count }, () =>
+        createDalle2Image({
+          prompt: prompt,
+          count: 1,
+          size: width+'x'+height,
+        }),
+      )
+    } else if(generator === 'stable'){
+      return Array.from({ length: count }, () =>
+        createStableDiffusionImage({
+          prompt: prompt,
+          count: 1,
+          height: height,
+          width: width
+        }),
+      )
+    }
   })
 
   try {
@@ -33,22 +46,32 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
       }
 
       const name = imagePrompts[currentPromptIndex]?.name
+      const generator = imagePrompts[currentPromptIndex]?.generator
       if (name) {
         if (!images[name]) {
           images[name] = []
         }
-        const imageData = fetchResponse.data[0]
-        if (imageData && imageData.b64_json) {
-          images[name].push(imageData.b64_json)
-        } else {
-          throw new Error(`Image data is undefined for name ${name}`)
+        if(generator === 'dalle'){
+          const imageData = fetchResponse.data[0]
+          if (imageData && imageData.b64_json) {
+            images[name].push(imageData.b64_json)
+          } else {
+            throw new Error(`Image data is undefined for name ${name}`)
+          }
+        } else if(generator === 'stable'){
+          const imageURL = fetchResponse.output[0]
+          if (imageURL) {
+            images[name].push(imageURL)
+          } else {
+            throw new Error(`Image data is undefined for name ${name}`)
+          }
         }
+        
       } else {
         throw new Error(`Name is undefined at index ${currentPromptIndex}`)
       }
     })
 
-    //console.log('images', images);
     return images // return the object of image prompts and URLs
   } catch (error) {
     console.error('Error generating images:', error)

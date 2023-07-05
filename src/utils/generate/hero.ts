@@ -43,7 +43,7 @@ export function generateHeroSection({
           </div>
         </nav>
         <!-- Mobile menu, show/hide based on menu open state. -->
-        <div class="lg:hidden hidden" role="dialog" aria-modal="true">
+        <div id="mobile-menu" class="lg:hidden hidden" role="dialog" aria-modal="true">
           <!-- Background backdrop, show/hide based on slide-over state. -->
           <div class="fixed inset-0 z-50"></div>
           <div class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
@@ -60,12 +60,12 @@ export function generateHeroSection({
             </div>
             <div class="mt-6 flow-root">
               <div class="-my-6 divide-y divide-gray-500/10">
-                <div class="space-y-2 py-6">
-                  <a href="#features" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</a>
-                  <a href="#about-us" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">About Us</a>
-                  <a href="#testimonials" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Testimonials</a>
-                  <a href="#contact-us" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Contact Us</a>
-                </div>
+              <div class="space-y-2 py-6">
+                <a id="menu-item-features" href="#features" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Features</a>
+                <a id="menu-item-about-us" href="#about-us" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">About Us</a>
+                <a id="menu-item-testimonials" href="#testimonials" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Testimonials</a>
+                <a id="menu-item-contact-us" href="#contact-us" class="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">Contact Us</a>
+              </div>
               </div>
             </div>
           </div>
@@ -98,6 +98,13 @@ export function generateHeroSection({
 
       document.getElementById('close-menu-button').addEventListener('click', function() {
         document.getElementById('mobile-menu').classList.add('hidden');
+      });
+
+      // Close the menu when a menu item is clicked
+      ['features', 'about-us', 'testimonials', 'contact-us'].forEach(function(id) {
+        document.getElementById('menu-item-' + id).addEventListener('click', function() {
+          document.getElementById('mobile-menu').classList.add('hidden');
+        });
       });
     </script>
     `

@@ -50,7 +50,7 @@ export function PromptForm({
     >
       <div className="relative flex items-start max-h-60 w-full grow overflow-hidden bg-background sm:rounded-md sm:border">
         <Link
-          href="/"
+          href="/dashboard"
           className={cn(
             'w-16 h-[66px] rounded-full bg-background flex items-center justify-center',
           )}

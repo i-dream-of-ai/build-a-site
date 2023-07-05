@@ -3,6 +3,9 @@ import { deleteBucket } from '@/utils/s3/delete'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { generateHTML } from '@/utils/generate/html'
+import { uploadHTMLToS3 } from '@/utils/s3'
+import { Site } from '@/types/site'
 
 const dbName = process.env.MONGODB_DB
 
@@ -69,3 +72,63 @@ export async function DELETE(
     return NextResponse.json({ error: error }, { status: 500 })
   }
 }
+
+export async function PATCH( req: NextRequest, { params }: { params: { id: string } }) {
+
+  const { id } = params;
+
+  const { bucketName, siteData } = await req.json();
+
+  const token = await getToken({ req })
+  if (!token) {
+    return NextResponse.json(
+      { error: 'Error. Session not found.' },
+      { status: 400 },
+    )
+  }
+
+  const user = token.user as any
+  if (!user) {
+    return NextResponse.json(
+      { error: 'Error. User not found.' },
+      { status: 400 },
+    )
+  }
+  
+  if (!id) {
+    return NextResponse.json(
+      { error: 'Site ID not found.' },
+      { status: 400 },
+    )
+  }
+
+  try {
+
+    //create html
+    const { html } = await generateHTML(siteData);
+
+    //update file in bucket
+    await uploadHTMLToS3(html, bucketName);
+
+    const client = await clientPromise
+    const collection = client.db(dbName).collection('sites')
+    const response = await collection.updateOne(
+      { 
+        _id: new ObjectId(id),
+        userId: new ObjectId(user?._id),
+      },
+      { $set: {content: siteData} }
+    );
+
+    if (response.matchedCount === 0) {
+      return NextResponse.json({ error: "Site not found." }, { status: 500 })
+    }
+
+    // Respond with the stream
+    return NextResponse.json(response, { status: 200 })
+  } catch (error) {
+    console.error(error)
+    return NextResponse.json({ error: error }, { status: 500 })
+  }
+}
+

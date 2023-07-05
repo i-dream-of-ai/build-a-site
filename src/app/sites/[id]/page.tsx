@@ -8,6 +8,7 @@ import { Site } from '@/types/site'
 const dbName = process.env.MONGODB_DB
 
 async function getData(id: string) {
+  
   const session = (await getServerSession(authOptions)) as any
   const user = session.user as any
 
