@@ -48,7 +48,7 @@ export const generate_site = {
       heroImagePrompt: {
         type: 'string',
         description:
-          'Generate a professional detailed image prompt for the hero section. This detailed image prompt will be used with an AI generator like DALLE-2. This prompt should create a highly detailed image that features a professional looking photo of the product of the business, with great lighting. There should never be a person in this image. This prompt should reflect the business branding, and should attract customers to engage with the brand.',
+          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       features: {
         type: 'array',
@@ -89,7 +89,7 @@ export const generate_site = {
       aboutUsImagePrompt: {
         type: 'string',
         description:
-          'Professional detailed image prompt that will used to generate an image for the about us section. Return a professional image prompt that will be used with an AI generator like DALLE-2. This prompt should reflect the business branding by showing a product of the company, and should attract customers to engage with the brand. There should never be a person in this image. The image generated should be products of the business.',
+          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       aboutUsTitle: {
         type: 'string',
