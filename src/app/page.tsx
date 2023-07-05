@@ -9,8 +9,8 @@ export default async function Page() {
 
   return (
     <div className="space-y-8">
-      <h1 className="text-xl font-medium text-gray-300">
-        Ready to build a site with AI? LFG!
+      <h1 className="text-xl font-medium text-gray-300 mx-auto text-center">
+        Build a complete website with Alien Technology (AI) in under 5 minutes!
       </h1>
 
       <div className="space-y-6 text-white">

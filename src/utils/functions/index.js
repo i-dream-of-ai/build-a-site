@@ -245,7 +245,7 @@ export async function createDalle2Image(args) {
 
     if (!res.ok) {
       console.error('Error during createImage:', response)
-      throw new Error('Error during createImage:', response)
+      throw new Error('Error during createImage:', response.error.message)
     }
 
     return response

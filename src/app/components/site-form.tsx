@@ -1,6 +1,6 @@
 'use client'
 
-import { IconPhotoAi } from '@tabler/icons-react'
+import { IconArrowsExchange, IconPhotoAi, IconRecycle, IconRefresh } from '@tabler/icons-react'
 import { Site } from '@/types/site'
 import React, { useState } from 'react'
 import { Feature } from '@/types/feature'
@@ -236,8 +236,8 @@ export default function SiteForm({ site }: SiteProps) {
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
                 {siteData.testimonialImageURL ? (
                   <div>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Dalle</button>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Stable Diffusion</button>
+                    {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Dalle</button> */}
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','testimonialImage',siteData.testimonialImage, '512', '512')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
                     <img className='rounded-md' src={siteData.testimonialImageURL} />
                   </div>
                 ) : (
@@ -344,8 +344,8 @@ export default function SiteForm({ site }: SiteProps) {
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10">
                 {siteData.aboutUsImageURL ? (
                   <div>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Dalle</button>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Stable Diffusion</button>
+                    {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Dalle</button> */}
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
                     <img className='rounded-md' src={siteData.aboutUsImageURL} />
                   </div>
                 ) : (
@@ -465,8 +465,8 @@ export default function SiteForm({ site }: SiteProps) {
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 p-6">
                 {siteData.featureImageURL ? (
                   <div>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Dalle</button>
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md sm:ml-4 mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Stable Diffusion</button>
+                    {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Dalle</button> */}
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '512', '512')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
                     <img className='rounded-md' src={siteData.featureImageURL} />
                   </div>
                 ) : (
