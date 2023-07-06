@@ -1,3 +1,19 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.animate-ufo{
+    position: relative;
+    animation: leftRight 2s infinite;
+  }
+  
+  @keyframes leftRight {
+    0%,
+    100% {
+      left: 0;
+    }
+  
+    50% {
+      left: 300px;
+    }
+  }

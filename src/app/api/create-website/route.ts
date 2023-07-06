@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json()
 
-  const { title, userId, heroImagePrompt, testimonialImagePrompt, aboutUsImagePrompt } = body.args
+  const { title, userId, featureImagePrompt, testimonialImagePrompt, aboutUsImagePrompt } = body.args
 
   if (!userId) {
     return NextResponse.json(
@@ -64,10 +64,11 @@ export async function POST(req: NextRequest) {
         { 
           generator: 'stable', 
           name: 'featureImage', 
-          prompt: heroImagePrompt, 
+          prompt: featureImagePrompt, 
           count: 1, 
-          height: '576', 
-          width: '1024' 
+          height: '512', 
+          width: '512',
+          bucketName
         },
         {
           generator: 'stable',
@@ -75,15 +76,17 @@ export async function POST(req: NextRequest) {
           prompt: aboutUsImagePrompt,
           count: 1,
           height: '576',
-          width: '1024'
+          width: '1024',
+          bucketName
         },
         {
           generator: 'stable',
           name: 'testimonialImage',
           prompt: testimonialImagePrompt,
           count: 1,
-          height: '512',
-          width: '512'
+          height: '720',
+          width: '720',
+          bucketName
         },
       ])
     } catch (error) {

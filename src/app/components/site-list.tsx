@@ -1,19 +1,21 @@
 'use client'
 
-import { Fragment, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { IconCircleArrowUpRight, IconDotsVertical, IconPencil, IconX } from '@tabler/icons-react'
+import { IconDotsVertical, IconExternalLink, IconPencil, IconX } from '@tabler/icons-react'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
 import { Site } from '@/types/site'
+import { ListSkeleton } from '@/ui/list-skeleton'
 
 export interface SitesProps {
   sites: Site[]
 }
 
-export function SiteList({ sites: siteList }: SitesProps) {
+export function SiteList() {
   
-  const [sites, setSites] = useState(siteList)
+  const [sites, setSites] = useState<Site[]>([])
+  const [isLoading, setIsLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
 
   async function deleteSite(id: string, name:string) {
@@ -31,7 +33,7 @@ export function SiteList({ sites: siteList }: SitesProps) {
     const data = await response.json()
 
     if (!response.ok) {
-      toast.error('There was an error while deleting you site.')
+      toast.error('There was an error while deleting your site.')
       console.error(data)
     } else {
       toast.success('Site deleted.')
@@ -41,21 +43,46 @@ export function SiteList({ sites: siteList }: SitesProps) {
   }
 
   async function getSites() {
+    setIsLoading(true)
     try {
-      const response = await fetch('/api/sites')
+      const response = await fetch('/api/sites', {
+        next: { tags: ['sites']}
+      })
       const data = await response.json()
 
-      console.log('data', data)
       if (!response.ok) {
         toast.error('There was an error while getting your sites.')
         console.error(data.sites)
+      } else {
+        setSites(data.sites)
+        setIsLoading(false)
       }
 
-      setSites(data.sites)
     } catch (error) {
       toast.error('There was an error while getting your sites.')
       console.error(error)
+      setIsLoading(false)
     }
+  }
+
+  useEffect(()=>{
+    getSites();
+  },[])
+
+  if(!sites.length && !isLoading){
+    return (
+      <div className="">
+        <Link href="dashboard" className="bg-purple-600 text-white hover:bg-purple-500 px-4 py-2 rounded-md">
+          Generate a new site
+        </Link>
+      </div>
+    )
+  }
+
+  if(isLoading){
+    return(
+      <ListSkeleton />
+    )
   }
 
   return (
@@ -78,7 +105,7 @@ export function SiteList({ sites: siteList }: SitesProps) {
               target="_blank"
               className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1"
             >
-              <span>View</span> <IconCircleArrowUpRight className='h-5 w-5'/> <span className="sr-only">, {site.bucketName}</span>
+              <span>View</span> <IconExternalLink className='h-5 w-5'/> <span className="sr-only">, {site.bucketName}</span>
             </a>
               <Link
                 href={`/sites/${site._id}`}

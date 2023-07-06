@@ -45,7 +45,7 @@ export const generate_site = {
         description:
           "Content for the hero section of the website. This should be at least 1 full sentence, and 4 sentences max. It should be optimized to the brands ideal customers. Generate this based on the information you have about the business. Don't ask the user for this.",
       },
-      heroImagePrompt: {
+      featureImagePrompt: {
         type: 'string',
         description:
           "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
@@ -122,7 +122,7 @@ export const generate_site = {
       testimonialImagePrompt: {
         type: 'string',
         description:
-          "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic close up portrait ((female)) DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
+          "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic close up portrait ((female)), DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       copywrite: {
         type: 'string',
@@ -134,7 +134,7 @@ export const generate_site = {
       'title',
       'heroTitle',
       'heroContent',
-      'heroImagePrompt',
+      'featureImagePrompt',
       'featureSectionTagline',
       'featureSectionTitle',
       'featureSectionContent',
@@ -198,15 +198,15 @@ export async function createStableDiffusionImage(args) {
           key: process.env.STABLE_DIFFUSION_KEY,
           prompt: args.prompt,
           negative_prompt: args.negativePrompt || 'sex, nude, breasts, butt, tits, sexy, naked',
-          width: args.width ? args.width : '1024',
-          height: args.height ? args.height : '576',
+          width: args.width,
+          height: args.height,
           samples: args.count || 1,
           num_inference_steps: '20',
           seed: null,
-          guidance_scale: '7.5',
+          guidance_scale: '7',
           safety_checker: 'yes',
           self_attention: 'no',
-          webhook: null,
+          webhook: process.env.NEXTAUTH_URL+'/api/stable-d-webhook',
           panorama: 'no',
           enhance_prompt: 'yes',
         }),

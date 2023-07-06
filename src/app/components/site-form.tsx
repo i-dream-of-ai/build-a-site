@@ -1,23 +1,112 @@
 'use client'
 
-import { IconArrowsExchange, IconPhotoAi, IconRecycle, IconRefresh } from '@tabler/icons-react'
+import { IconExternalLink, IconPhotoAi, IconRefresh } from '@tabler/icons-react'
 import { Site } from '@/types/site'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Feature } from '@/types/feature'
 import { toast } from 'react-hot-toast'
 
 export interface SiteProps {
-  site: Site
+  id: string
 }
 
-export default function SiteForm({ site }: SiteProps) {
+export default function SiteForm({ id }: SiteProps) {
 
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
 
-  const [siteData, setSiteData] = useState(site.content);
+  const [siteData, setSiteData] = useState({
+    colors: {
+      mainTextColor: '',
+      secondaryTextColor: '',
+      mainBackgroundColor: '',
+      secondaryBackgroundColor: '',
+      gradientFromColor: '',
+      gradientToColor: '',
+    },
+    title: '',
+    heroTitle: '',
+    heroContent: '',
+    featureImagePrompt: '',
+    features: [
+      {title:'',content:''}
+    ],
+    featureSectionTagline: '',
+    featureSectionTitle: '',
+    featureSectionContent: "",
+    aboutUsImagePrompt: '',
+    aboutUsTitle: '',
+    aboutUsContent: "",
+    testimonial: {name:'', content:''},
+    testimonialImagePrompt: '',
+    userId: '',
+    featureImageURL: '',
+    aboutUsImageURL: '',
+    testimonialImageURL: '',
+    copywrite: ''
+  })
+
+  const [site, setSite] = useState<Site>({
+    _id: '',
+    bucketName: '',
+    userId: '',
+    content: {
+      colors: {
+        mainTextColor: '',
+        secondaryTextColor: '',
+        mainBackgroundColor: '',
+        secondaryBackgroundColor: '',
+        gradientFromColor: '',
+        gradientToColor: '',
+      },
+      title: '',
+      heroTitle: '',
+      heroContent: '',
+      featureImagePrompt: '',
+      features: [
+        {title:'',content:''}
+      ],
+      featureSectionTagline: '',
+      featureSectionTitle: '',
+      featureSectionContent: "",
+      aboutUsImagePrompt: '',
+      aboutUsTitle: '',
+      aboutUsContent: "",
+      testimonial: {name:'', content:''},
+      testimonialImagePrompt: '',
+      userId: '',
+      featureImageURL: '',
+      aboutUsImageURL: '',
+      testimonialImageURL: '',
+      copywrite: ''
+    },
+    href: ''
+  });
+
+  async function getSite(){
+    try {
+      const response = await fetch(`/api/sites/${id}`)
+      const data = await response.json()
+  
+      if (!response.ok) {
+        console.error('There was an error getting your site: ',data)
+        throw new Error('There was an error getting your site.')
+      }
+      console.log(data)
+      setSite(data.site);
+      setSiteData(data.site.content);
+    } catch (error) {
+      console.error('There was an error getting your site: ',error)
+      throw new Error('There was an error getting your site.')
+    }
+  }
+
+  useEffect(()=>{
+    getSite();
+  },[])
+  
 
   const handleInputChange = (index: number, key: keyof Feature, value: string) => {
-    const newFeatures = [...siteData.features];
+    const newFeatures = [...site.content.features];
     newFeatures[index][key] = value;
     setSiteData({...siteData, features: newFeatures});
   };
@@ -58,7 +147,7 @@ export default function SiteForm({ site }: SiteProps) {
           generator,
           prompt,
           field, 
-          siteId: site._id,
+          siteId: id,
           height,
           width
         })
@@ -67,26 +156,44 @@ export default function SiteForm({ site }: SiteProps) {
       if(!res.ok){
         toast.error(response.error)
         console.log(response)
+      }else {
+        setSiteData({...siteData, [response.image.key]: response.image.value});
+        toast.success('Image generation successful.')
       }
-      console.log(response);
       setIsGeneratingImage(false);
+
     } catch (error) {
       setIsGeneratingImage(false);
       console.error('generateNewFeatureImage Error: ',error)
     }
   }
 
+  if(!siteData) return;
+
   return (
     <form onSubmit={updateSite}>
       <div className="space-y-12">
         <div className="border-b border-white/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-white">
-            General Information
-          </h2>
-          <p className="mt-1 text-sm leading-6 text-gray-400">
-            This information will be displayed in your navbar and when you share
-            the site URL.
-          </p>
+
+          <div className='flex justify-between items-center'>
+            <div>
+              <h2 className="text-base font-semibold leading-7 text-white">
+                Edit Website Content
+              </h2>
+              <p className="mt-1 text-sm leading-6 text-gray-400 max-w-md">
+                Use this form to edit and update your text content and images.
+              </p>
+            </div>
+            <div>
+              <a
+                href={site.href}
+                target="_blank"
+                className="flex items-center justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1 w-32"
+              >
+                <span>View Site</span> <IconExternalLink className='h-5 w-5'/>
+              </a>
+            </div>
+          </div>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-6">
@@ -127,7 +234,7 @@ export default function SiteForm({ site }: SiteProps) {
                 htmlFor="heroTitle"
                 className="block text-sm font-medium leading-6 text-white"
               >
-                Hero Title
+                Hero Header
               </label>
               <div className="mt-2">
                 <div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
@@ -238,7 +345,7 @@ export default function SiteForm({ site }: SiteProps) {
                   <div>
                     {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','testimonialImage',siteData.testimonialImage, '512', '512')}>Generate Image with Dalle</button> */}
                     <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','testimonialImage',siteData.testimonialImagePrompt, '512', '512')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
-                    <img className='rounded-md' src={siteData.testimonialImageURL} />
+                    <img className='rounded-md  max-h-[350px]' src={siteData.testimonialImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -346,7 +453,7 @@ export default function SiteForm({ site }: SiteProps) {
                   <div>
                     {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Generate Image with Dalle</button> */}
                     <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','aboutUsImage',siteData.aboutUsImagePrompt, '576', '1024')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
-                    <img className='rounded-md' src={siteData.aboutUsImageURL} />
+                    <img className='rounded-md max-h-[512px]' src={siteData.aboutUsImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -447,27 +554,27 @@ export default function SiteForm({ site }: SiteProps) {
 
             <div className="w-full">
               <label
-                htmlFor="cover-photo"
+                htmlFor="featureImagePrompt"
                 className="block text-sm font-medium leading-6 text-white"
               >
                 Feature Image Prompt
               </label>
               <div className="mt-2">
                 <textarea
-                  id="heroImage"
-                  name="heroImage"
+                  id="featureImagePrompt"
+                  name="featureImagePrompt"
                   rows={3}
-                  value={siteData.heroImagePrompt}
-                  onChange={(e)=>handleFieldChange('heroImagePrompt', e.target.value)}
+                  value={siteData.featureImagePrompt}
+                  onChange={(e)=>handleFieldChange('featureImagePrompt', e.target.value)}
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>
               <div className="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 p-6">
                 {siteData.featureImageURL ? (
                   <div>
-                    {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.heroImagePrompt, '512', '512')}>Generate Image with Dalle</button> */}
-                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.heroImagePrompt, '576', '1024')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
-                    <img className='rounded-md' src={siteData.featureImageURL} />
+                    {/* <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white rounded-md mb-4' onClick={()=>generateNewImage('dalle','featureImage',siteData.featureImagePrompt, '512', '512')}>Generate Image with Dalle</button> */}
+                    <button disabled={isGeneratingImage} className='disabled:animate-pulse disabled:cursor-wait px-4 py-2 bg-purple-600 text-white flex items-center justify-center gap-1 rounded-md mb-4' onClick={()=>generateNewImage('stable','featureImage',siteData.featureImagePrompt, '720', '720')}>Regenerate Image <IconRefresh className='w-5 h-5'/> </button>
+                    <img className='rounded-md max-w-[512px]' src={siteData.featureImageURL} />
                   </div>
                 ) : (
                   <div className="text-center">
@@ -576,7 +683,9 @@ export default function SiteForm({ site }: SiteProps) {
           </div>
         </div>
       </div>
-
+      <div className='text-sm m-2 text-gray-400'>
+        Note: Images will not regenerate using the Update Site button. To regenerate your images use the Regenerate Image buttons in the form above. Your website content is cached for one hour, so you may need to refresh your browser cache or use a different browser to see immediate changes.
+      </div>
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
@@ -586,9 +695,9 @@ export default function SiteForm({ site }: SiteProps) {
         </button>
         <button
           type="submit"
-          className="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-purple-700"
         >
-          Save
+          Update Site
         </button>
       </div>
     </form>

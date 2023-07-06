@@ -13,6 +13,7 @@ import { OpenAIModel, OpenAIModels } from '@/types/openai'
 import { useSession } from 'next-auth/react'
 
 import { useRouter, useSearchParams } from 'next/navigation'
+import { IconAlien, IconAlienFilled, IconAugmentedReality, IconVector } from '@tabler/icons-react'
 
 export interface ChatProps extends React.ComponentProps<'div'> {
   initialMessages?: Message[]
@@ -167,6 +168,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
                       <div className="mt-2">
                         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-600">
                           <input
+                            required
                             type="text"
                             name="title"
                             id="title"
@@ -194,6 +196,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
                       <div className="mt-2">
                         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-600">
                           <input
+                            required
                             type="text"
                             name="title"
                             id="title"
@@ -221,6 +224,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
                       <div className="mt-2">
                         <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-purple-600">
                           <input
+                            required
                             type="text"
                             name="title"
                             id="title"
@@ -237,9 +241,10 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
               </div>
               <button
                 type="submit"
-                className="py-2 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white"
+                //disabled={!businessName || !productType || !colorType}
+                className={`py-2 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white gap-1 hover:animate-none ${businessName && productType && colorType && 'animate-pulse'}`}
               >
-                Get Started
+                <IconAugmentedReality className='hover:animate-ping'/> Start Mysterious AI Generator 
               </button>
             </form>
           </div>

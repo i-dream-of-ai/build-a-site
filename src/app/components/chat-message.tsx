@@ -8,6 +8,7 @@ import { MemoizedReactMarkdown } from './markdown'
 import { ChatMessageActions } from './chat-message-actions'
 import { IconAlien, IconUser } from '@tabler/icons-react'
 import { useEffect, useState } from 'react'
+import Image from 'next/image'
 
 export interface ChatMessageProps {
   message: Message
@@ -35,7 +36,8 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
   if (usingFunction) {
     return (
       <div className="px-4 py-2 bg-purple-600 text-white rounded">
-        {usingFunction}
+        <Image src="/ufo.svg" width="300" height="300" alt="ufo" className='animate-ufo'/>
+        <div className='text-white font-bold animate-pulse text-4xl text-center mx-auto -mt-8 mb-4'>Generating Site</div>
       </div>
     )
   }

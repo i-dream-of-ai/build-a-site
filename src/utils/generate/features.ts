@@ -58,7 +58,7 @@ export function generateFeaturesSection({
             <div class="relative isolate overflow-hidden ${colors.mainBackgroundColor} px-6 pt-8 sm:mx-auto sm:max-w-2xl sm:rounded-3xl sm:pl-16 sm:pr-0 sm:pt-16 lg:mx-0 lg:max-w-none">
               <div class="absolute -inset-y-px -left-3 -z-10 w-full origin-bottom-left skew-x-[-30deg] ${colors.secondaryBackgroundColor} opacity-50 ring-1 ring-inset ring-white" aria-hidden="true"></div>
               <div class="mx-auto max-w-2xl sm:mx-0 sm:max-w-none">
-                <img src="${featureImageURL}" alt="Product screenshot" width="512" height="512" class="-mb-12 w-[500px] h-[500px] max-w-none rounded-tl-xl bg-gray-800 ring-1 ring-white/10 object-cover">
+                <img src="${featureImageURL}" alt="Product screenshot" width="512" height="512" class="-mb-12 w-[500px] h-[500px] max-w-none rounded-tl-xl bg-gray-800 ring-1 ring-white/10 object-contain">
               </div>
               <div class="pointer-events-none absolute inset-0 ring-1 ring-inset ring-black/10 sm:rounded-3xl" aria-hidden="true"></div>
             </div>

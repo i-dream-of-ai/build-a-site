@@ -109,9 +109,7 @@ export async function uploadImagesToS3(
         }
         await s3Client.send(new PutObjectCommand(params))
         // Replace the image URL in the images object with the S3 URL
-        images[name][
-          i
-        ] = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}-${i}${extname(imageUrls[i])}`
+        images[name][i] = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}-${i}${extname(imageUrls[i])}`
       }
     }
     return images

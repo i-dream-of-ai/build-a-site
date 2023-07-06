@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { createImages } from '@/utils/generate/images'
+import { getRandomInt } from '@/lib/utils'
 
 const dbName = process.env.MONGODB_DB
 
@@ -56,7 +57,8 @@ export async function POST(req: NextRequest) {
           prompt: prompt, 
           count: 1, 
           width: width, 
-          height: height 
+          height: height,
+          bucketName: site.bucketName
         }])
       } catch (error) {
 
@@ -70,10 +72,26 @@ export async function POST(req: NextRequest) {
         }
       }
   
-      await uploadImagesToS3(images, site.bucketName)
-  
+      await uploadImagesToS3(images, site.bucketName);
+
+      const keys = Object.keys(images);
+      let value = images[keys[0]]+'?version='+getRandomInt(100, 10000);
+
+      await collection.updateOne(
+        {
+          _id: new ObjectId(siteId),
+          userId: new ObjectId(userId),
+        },
+        {
+          $set: {
+            [`content.${keys[0]}URL`]: value,
+            [`content.${keys[0]}Prompt`]: prompt
+          }
+        }
+      )
+
       return NextResponse.json(
-        { message: 'Images created successfully', images: images },
+        { message: 'Image generation successfull.', image: {key: keys[0]+'URL', value:value} },
         { status: 200 },
       )
     } catch (error) {

@@ -5,9 +5,55 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { generateHTML } from '@/utils/generate/html'
 import { uploadHTMLToS3 } from '@/utils/s3'
-import { Site } from '@/types/site'
 
 const dbName = process.env.MONGODB_DB
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const {id} = params;
+
+  if (!id) {
+    console.error('Error. ID not found.')
+    return NextResponse.json(
+      { error: 'Error. ID not found.' },
+      { status: 400 },
+    )
+  }
+
+  const token = await getToken({ req })
+  if (!token) {
+    console.error('Error. Session not found.')
+    return NextResponse.json(
+      { error: 'Error. Session not found.' },
+      { status: 400 },
+    )
+  }
+
+  const user = token.user as any
+  if (!user) {
+    console.error('Error. User not found.')
+    return NextResponse.json(
+      { error: 'Error. User not found.' },
+      { status: 400 },
+    )
+  }
+
+  try {
+    const client = await clientPromise
+    const collection = client.db(dbName).collection('sites')
+    const site = await collection.findOne({
+      userId: new ObjectId(user._id),
+      _id: new ObjectId(id)
+    })
+
+    return NextResponse.json({ site: site }, { status: 200 })
+
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 })
+  }
+
+}
 
 export async function DELETE(
   req: NextRequest,
@@ -57,9 +103,9 @@ export async function DELETE(
     }
 
     //delete index file and bucket
-    const isDeleted = await deleteBucket(siteResponse.bucketName)
+    const isDeleted = await deleteBucket(siteResponse.bucketName);
 
-    if (!isDeleted.success) {
+    if (isDeleted.error || !isDeleted.success) {
       return NextResponse.json({ error: isDeleted }, { status: 500 })
     }
 
