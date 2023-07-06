@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { LoginButton, RegisterButton } from '@/ui/nav-buttons'
 import AlienInvasion from "@/ui/alien-invasion"
+import Image from 'next/image'
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
@@ -10,22 +11,11 @@ export default async function Page() {
   return (
     <div className="space-y-8">
       <h1 className="text-xl font-medium text-gray-300 mx-auto text-center">
-        Build a complete website with Alien Technology (AI) in under 5 minutes!
+        Build a complete website with Alien Technology (AI) in under a minute!
       </h1>
 
       <div className="space-y-6 text-white">
-        {session ? (
-          <div className="space-y-3">
-            <p className="mb-2">You have an account!</p>
-
-            <Link
-              href="/dashboard"
-              className="border rounded py-2 flex w-52 items-center justify-center"
-            >
-              Get Started!
-            </Link>
-          </div>
-        ) : (
+        {!session && (
           <div className="flex flex-col sm:flex-row items-center justify-between max-w-lg gap-3 mx-auto">
             <div>
               <p className="mb-2">Have an account? </p>
@@ -39,6 +29,18 @@ export default async function Page() {
           </div>
         )}
       </div>
+      <iframe className='mx-auto border rounded-md' width="560" height="315" src="https://www.youtube.com/embed/fxj5PWgWMWU?controls=0" title="" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;" allowFullScreen></iframe>
+      {session ? (
+          <div className="space-y-3">
+            <Link
+              href="/dashboard"
+              className="mx-auto border rounded py-2 flex w-52 items-center justify-center"
+            >
+              Get Started
+            </Link>
+          </div>
+      ):""}
+
       <AlienInvasion />
 
     </div>
