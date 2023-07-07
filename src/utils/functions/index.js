@@ -5,7 +5,7 @@ export const runtime = 'edge'
 export const generate_site = {
   name: 'generate_site',
   description:
-    "This function generates quality content and a color palette and then generates a single page website. The AI assistant creates the content, it's not the users job to create the content. The AI will only ask if the user is ready, then generate the site. The AI assistant will not ask for the content itself, since it is the assistants task to create it. The AI assistant doen not need to show the user the content, unless the user asks. The content generated will be inserted into prebuilt website templates for the user, the color palette will be used in the templates by leveraging TailwindCSS. The sections we will provide content for are the hero section, features section, about-us section, testimonials section, contact-us section, and the footer.",
+    "This function generates quality content and a color palette and then generates a single page website. The AI assistant creates the content, it's not the users job to create the content. The AI will only ask if the user is ready, then generate the site. The AI assistant will not ask for the content itself, since it is the assistants task to create it. The AI assistant doen not need to show the user the content, unless the user asks. The content generated will be inserted into prebuilt website templates for the user, the color palette will be used in the templates by leveraging TailwindCSS. The sections we will provide content for are the hero section, features section, about-us section, testimonials section, contact-us section, and the footer. We have success when we get back a URL containing amazonaws.com. On success we inform the user they can edit and view thier website on the Sites page, located at /sites. Do not link any other URLs.",
   parameters: {
     type: 'object',
     properties: {
@@ -48,7 +48,7 @@ export const generate_site = {
       featureImagePrompt: {
         type: 'string',
         description:
-          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
+          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic and detailed photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       features: {
         type: 'array',
@@ -89,7 +89,7 @@ export const generate_site = {
       aboutUsImagePrompt: {
         type: 'string',
         description:
-          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
+          "Return a professional image prompt that will be used with an AI image generator. Always use the following prompt template and only change the product to match the product of the business. Never include people in the prompt. Prompt Template: 'realistic and detailed photo of a ((product)), DSLR photography, sharp focus, cinematic lighting, f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       aboutUsTitle: {
         type: 'string',
@@ -109,7 +109,7 @@ export const generate_site = {
           name: {
             type: 'string',
             description:
-              'The name of the person who write the testimonial for the business.',
+              'The name of the person who write the testimonial for the business. Never use Jane Doe or John Doe. Be creative with the name.',
           },
           content: {
             type: 'string',
@@ -122,7 +122,7 @@ export const generate_site = {
       testimonialImagePrompt: {
         type: 'string',
         description:
-          "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic close up portrait ((female)), DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
+          "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic and detailed close up portrait ((female)), DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
       copywrite: {
         type: 'string',

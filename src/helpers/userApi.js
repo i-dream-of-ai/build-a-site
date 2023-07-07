@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs'
 import clientPromise from '@/lib/mongodb'
+import { OpenAIModels } from '@/types/openai'
 
 export const users = {
   authenticate,
@@ -56,6 +57,7 @@ async function create(params) {
       email: params.email,
       password: bcrypt.hashSync(params.password, 10),
       role: params.email === 'kitchenbeats@gmail.com' ? 'admin' : 'user',
+      model: OpenAIModels[process.env.NEXT_PUBLIC_DEFAULT_MODEL]
     })
     return result
   } catch (error) {

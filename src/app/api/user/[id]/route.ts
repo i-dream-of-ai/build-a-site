@@ -1,16 +1,17 @@
 import clientPromise from '@/lib/mongodb'
-import { deleteBucket } from '@/utils/s3/delete'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { generateHTML } from '@/utils/generate/html'
 import { uploadHTMLToS3 } from '@/utils/s3'
+import { OpenAIModelID, OpenAIModels } from '@/types/openai'
 
 const dbName = process.env.MONGODB_DB
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+
   const {id} = params;
 
   if (!id) {
@@ -41,13 +42,18 @@ export async function GET(
 
   try {
     const client = await clientPromise
-    const collection = client.db(dbName).collection('sites')
-    const site = await collection.findOne({
-      userId: new ObjectId(user._id),
+    const collection = client.db(dbName).collection('users')
+    const user = await collection.findOne({
       _id: new ObjectId(id)
     })
+    if(!user){
+        return NextResponse.json({ message: "No User found." }, { status: 401 })
+    }
 
-    return NextResponse.json({ site: site }, { status: 200 })
+    user.model = user.model ? user.model : OpenAIModels[OpenAIModelID.GPT_3_5]
+    delete user.password;
+
+    return NextResponse.json(user, { status: 200 })
 
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 })
@@ -59,7 +65,6 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  
   const token = await getToken({ req })
   if (!token) {
     return NextResponse.json(
@@ -86,10 +91,9 @@ export async function DELETE(
 
   try {
     const client = await clientPromise
-    const collection = client.db(dbName).collection('sites')
+    const collection = client.db(dbName).collection('users')
     const siteResponse = await collection.findOne({
       _id: new ObjectId(id),
-      userId: new ObjectId(user?._id),
     })
 
     if (!siteResponse) {
@@ -101,13 +105,6 @@ export async function DELETE(
         { error: 'Site name not found.' },
         { status: 401 },
       )
-    }
-
-    //delete index file and bucket
-    const isDeleted = await deleteBucket(siteResponse.bucketName);
-
-    if (isDeleted.error || !isDeleted.success) {
-      return NextResponse.json({ error: isDeleted }, { status: 500 })
     }
 
     const response = await collection.deleteOne({ _id: siteResponse._id })
@@ -124,7 +121,7 @@ export async function PATCH( req: NextRequest, { params }: { params: { id: strin
 
   const { id } = params;
 
-  const { bucketName, siteData } = await req.json();
+  const { email, model } = await req.json();
 
   const token = await getToken({ req })
   if (!token) {
@@ -151,28 +148,20 @@ export async function PATCH( req: NextRequest, { params }: { params: { id: strin
 
   try {
 
-    //create html
-    const { html } = await generateHTML(siteData);
-
-    //update file in bucket
-    await uploadHTMLToS3(html, bucketName);
-
     const client = await clientPromise
-    const collection = client.db(dbName).collection('sites')
-    const response = await collection.updateOne(
-      { 
-        _id: new ObjectId(id),
-        userId: new ObjectId(user?._id),
-      },
-      { $set: {content: siteData} }
+    const collection = client.db(dbName).collection('users')
+    const response = await collection.findOneAndUpdate(
+      {  _id: new ObjectId(id) },
+      { $set: {email, model} },
+      { returnDocument: 'after' }
     );
 
-    if (response.matchedCount === 0) {
-      return NextResponse.json({ error: "Site not found." }, { status: 500 })
+    if (!response.value) {
+      return NextResponse.json({ error: "User not updated." }, { status: 500 })
     }
 
     // Respond with the stream
-    return NextResponse.json(response, { status: 200 })
+    return NextResponse.json(response.value, { status: 200 })
   } catch (error) {
     console.error(error)
     return NextResponse.json({ error: error }, { status: 500 })

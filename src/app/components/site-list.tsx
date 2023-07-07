@@ -1,87 +1,42 @@
 'use client'
 
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
 import { IconDotsVertical, IconExternalLink, IconPencil, IconX } from '@tabler/icons-react'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
-import { Site } from '@/types/site'
 import { ListSkeleton } from '@/ui/list-skeleton'
 
-export interface SitesProps {
-  sites: Site[]
-}
+import { useDeleteSite, useSites } from '@/lib/sites'
 
 export function SiteList() {
-  
-  const [sites, setSites] = useState<Site[]>([])
-  const [isLoading, setIsLoading] = useState(true);
-  const [isDeleting, setIsDeleting] = useState(false);
 
-  async function deleteSite(id: string, name:string) {
+  const { data: sites = [], isLoading, isError } = useSites();
 
-    setIsDeleting(true);
+  const deleteSiteMutation = useDeleteSite();
 
-    var ok = confirm(`Are you sure you want to delete ${name}?`);
+  const [isDeleting, setIsDeleting] = useState(false)
 
-    if(!ok) return;
-
-    const response = await fetch(`/api/sites/${id}`, {
-      method: 'DELETE',
-    })
-
-    const data = await response.json()
-
-    if (!response.ok) {
-      toast.error('There was an error while deleting your site.')
-      console.error(data)
-    } else {
-      toast.success('Site deleted.')
-    }
-    await getSites()
-    setIsDeleting(false);
+  const deleteSite = async (id: string, name:string) => {
+    setIsDeleting(true)
+    const ok = confirm(`Are you sure you want to delete ${name}?`);
+    if(!ok) {
+      setIsDeleting(false);
+      return;
+    };
+    deleteSiteMutation.mutate(id);
+    setIsDeleting(false)
   }
 
-  async function getSites() {
-    setIsLoading(true)
-    try {
-      const response = await fetch('/api/sites', {
-        next: { tags: ['sites']}
-      })
-      const data = await response.json()
+  if (isLoading) return <ListSkeleton />;
 
-      if (!response.ok) {
-        toast.error('There was an error while getting your sites.')
-        console.error(data.sites)
-      } else {
-        setSites(data.sites)
-        setIsLoading(false)
-      }
-
-    } catch (error) {
-      toast.error('There was an error while getting your sites.')
-      console.error(error)
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(()=>{
-    getSites();
-  },[])
-
-  if(!sites.length && !isLoading){
+  if(!sites?.length && !isLoading){
     return (
       <div className="">
         <Link href="dashboard" className="bg-purple-600 text-white hover:bg-purple-500 px-4 py-2 rounded-md">
           Generate a new site
         </Link>
       </div>
-    )
-  }
-
-  if(isLoading){
-    return(
-      <ListSkeleton />
     )
   }
 

@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import clientPromise from '@/lib/mongodb'
 import { users } from '@/helpers/userApi'
+import { User } from '@/types/user'
 
 declare module 'next-auth' {
   interface Session {
@@ -11,11 +12,6 @@ declare module 'next-auth' {
       user: User
     }
     authenticated: boolean
-  }
-  interface User {
-    email?: string | null
-    _id?: string
-    role: 'admin' | 'user'
   }
 }
 
@@ -94,5 +90,5 @@ export const authOptions = {
   },
 } as any
 
-const handler = NextAuth(authOptions)
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST }

@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import { LoginButton, RegisterButton } from '@/ui/nav-buttons'
 import AlienInvasion from "@/ui/alien-invasion"
-import Image from 'next/image'
 
 export default async function Page() {
   const session = await getServerSession(authOptions)
