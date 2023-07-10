@@ -99,23 +99,24 @@ export const runFunction = async (
         {
           role: 'system',
           content:
-            'Site generated successfully. Use the content from generate_site in your markdown response. If a URL was not provided for the website, there was an error and you should inform the user of it. If you received a URL then inform the user they can find a list of their sites on the sites page located at "/sites" and link it. Also display a link to the users site.',
+            'Site generated successfully. If a URL was not provided for the website, there was an error and you should inform the user of it. Do not make a URL up. If you received a URL then inform the user they can find a list of their sites on the sites page located at "/sites" and link it.',
         },
       )
-
     } catch (error) {
-
-      console.log('createSite content error: ', error)
+      console.log('generate_site error: ', error)
 
       messages.push(
         {
           role: 'function',
           name: 'generate_site',
-          content: 'There was an error, you must inform the user. '+JSON.stringify(error),
+          content:
+            'There was an error, you must inform the user. ' +
+            JSON.stringify(error),
         },
         {
           role: 'system',
-          content: 'There was an error, you must inform the user!',
+          content:
+            'There was an error, you must inform the user that there was an error, and to try again later.',
         },
       )
     } //end try catch

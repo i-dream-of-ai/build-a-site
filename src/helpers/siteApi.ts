@@ -27,7 +27,7 @@ async function getAll() {
       userId: new ObjectId(user._id),
     })
 
-    const sites = await siteResponse.toArray();
+    const sites = await siteResponse.toArray()
 
     // Convert each object in the array
     const simpleDataArray = sites.map((data) => ({
@@ -67,7 +67,7 @@ async function getById(id: string) {
       href: siteResponse.href as string,
     }
 
-    return site as Site;
+    return site as Site
   } catch (error) {
     throw new Error('Failed to fetch data')
   }

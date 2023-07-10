@@ -28,7 +28,6 @@ interface Conversation {
 }
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
-
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const router = useRouter()
@@ -36,7 +35,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
   const searchParams = useSearchParams()
   const convoId = searchParams.get('id')
 
-  const { data } = useSession()
+  const { data, status } = useSession()
   const user = data?.session?.user
 
   const [conversation, setConversation] = useState<Conversation>()
@@ -60,7 +59,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     id,
     body: {
       id: conversation?._id,
-      model: conversation?.model || OpenAIModels['gpt-4-0613'],
+      model: conversation?.model || user?.model,
     },
     onResponse(response) {
       if (response.status !== 200) {
@@ -69,6 +68,10 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     },
     onFinish(message) {
       setFinished(true)
+    },
+    onError(error) {
+      console.error(error)
+      toast.error(error.message)
     },
   })
 
@@ -92,7 +95,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       body: JSON.stringify({
         id: conversation?._id,
         messages,
-        model: OpenAIModels['gpt-4-0613'],
+        model: user?.model,
         userId: user?._id,
       }),
     })
@@ -132,10 +135,15 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
     }
     if (convoId && !conversation) {
       getConversation(convoId)
-    } else if(!convoId && conversation){
+    } else if (!convoId && conversation) {
       setConversation(undefined)
     }
   }, [convoId, conversation])
+
+  //fail safe for no user in session
+  if (!user && status !== 'loading') {
+    return null
+  }
 
   return (
     <>
@@ -242,9 +250,12 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
               <button
                 type="submit"
                 //disabled={!businessName || !productType || !colorType}
-                className={`py-2 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white gap-1 hover:animate-none ${businessName && productType && colorType && 'animate-pulse'}`}
+                className={`py-2 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white gap-1 hover:animate-none ${
+                  businessName && productType && colorType && 'animate-pulse'
+                }`}
               >
-                <IconAugmentedReality className='hover:animate-ping'/> Start Mysterious AI Generator 
+                <IconAugmentedReality className="hover:animate-ping" /> Start
+                Mysterious AI Generator
               </button>
             </form>
           </div>

@@ -9,100 +9,101 @@ import { getRandomInt } from '@/lib/utils'
 const dbName = process.env.MONGODB_DB
 
 export async function POST(req: NextRequest) {
+  const token: any = await getToken({ req })
 
-    const token: any = await getToken({ req })
+  if (!token || !token.user) {
+    return NextResponse.json(
+      { error: 'Error. Session not found.' },
+      { status: 400 },
+    )
+  }
 
-    if (!token || !token.user) {
-        return NextResponse.json(
-        { error: 'Error. Session not found.' },
+  const userId = token.user._id
+
+  const { generator, prompt, field, siteId, width, height } = await req.json()
+
+  const client = await clientPromise
+  const collection = client.db(dbName).collection('sites')
+
+  let site
+  try {
+    site = await collection.findOne({
+      _id: new ObjectId(siteId),
+      userId: new ObjectId(userId),
+    })
+    if (!site) {
+      return NextResponse.json(
+        { error: 'Site does not exist.' },
         { status: 400 },
-        )
-    }
-
-    const userId = token.user._id
-
-    const { generator, prompt, field, siteId, width, height } = await req.json()
-    
-    const client = await clientPromise
-    const collection = client.db(dbName).collection('sites')
-  
-    let site
-    try {
-      site = await collection.findOne({
-        _id: new ObjectId(siteId),
-        userId: new ObjectId(userId),
-      })
-      if (!site) {
-        return NextResponse.json(
-          { error: 'Site does not exist.' },
-          { status: 400 },
-        )
-      }
-    } catch (error) {
-      return NextResponse.json(
-        { error: 'Error checking if site exists.' },
-        { status: 500 },
       )
     }
-  
-    try {
-  
-      let images
-      try {
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Error checking if site exists.' },
+      { status: 500 },
+    )
+  }
 
-        //create the images. this function uses Promise.all
-        images = await createImages([{ 
-          generator: generator ,
-          name: field, 
-          prompt: prompt, 
-          count: 1, 
-          width: width, 
+  try {
+    let images
+    try {
+      //create the images. this function uses Promise.all
+      images = await createImages([
+        {
+          generator: generator,
+          name: field,
+          prompt: prompt,
+          count: 1,
+          width: width,
           height: height,
-          bucketName: site.bucketName
-        }])
-      } catch (error) {
-
-        if (error instanceof Error) {
-          return NextResponse.json({ error: error.message }, { status: 500 })
-        } else {
-          return NextResponse.json(
-            { error: 'An unknown error occurred in generate images.' },
-            { status: 500 },
-          )
-        }
-      }
-  
-      await uploadImagesToS3(images, site.bucketName);
-
-      const keys = Object.keys(images);
-      let value = images[keys[0]]+'?version='+getRandomInt(100, 10000);
-
-      await collection.updateOne(
-        {
-          _id: new ObjectId(siteId),
-          userId: new ObjectId(userId),
+          bucketName: site.bucketName,
         },
-        {
-          $set: {
-            [`content.${keys[0]}URL`]: value,
-            [`content.${keys[0]}Prompt`]: prompt
-          }
-        }
-      )
-
-      return NextResponse.json(
-        { message: 'Image generation successfull.', image: {key: keys[0]+'URL', value:value} },
-        { status: 200 },
-      )
+      ])
     } catch (error) {
-      //return the error so the AI can see it
       if (error instanceof Error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
       } else {
         return NextResponse.json(
-          { error: 'An unknown error occurred' },
+          { error: 'An unknown error occurred in generate images.' },
           { status: 500 },
         )
       }
     }
+
+    await uploadImagesToS3(images, site.bucketName)
+
+    const keys = Object.keys(images)
+    let value = images[keys[0]] + '?version=' + getRandomInt(100, 10000)
+
+    await collection.updateOne(
+      {
+        _id: new ObjectId(siteId),
+        userId: new ObjectId(userId),
+      },
+      {
+        $set: {
+          [`content.${keys[0]}URL`]: value,
+          [`content.${keys[0]}Prompt`]: prompt,
+        },
+      },
+    )
+
+    return NextResponse.json(
+      {
+        message: 'Image generation successfull.',
+        image: { key: keys[0] + 'URL', value: value },
+      },
+      { status: 200 },
+    )
+  } catch (error) {
+    //return the error so the AI can see it
+    if (error instanceof Error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    } else {
+      return NextResponse.json(
+        { error: 'An unknown error occurred' },
+        { status: 500 },
+      )
+    }
   }
+}

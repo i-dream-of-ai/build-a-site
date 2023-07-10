@@ -14,10 +14,15 @@ import { NextRequest, NextResponse } from 'next/server'
 const dbName = process.env.MONGODB_DB
 
 export async function POST(req: NextRequest) {
-
   const body = await req.json()
 
-  const { title, userId, featureImagePrompt, testimonialImagePrompt, aboutUsImagePrompt } = body.args
+  const {
+    title,
+    userId,
+    featureImagePrompt,
+    testimonialImagePrompt,
+    aboutUsImagePrompt,
+  } = body.args
 
   if (!userId) {
     return NextResponse.json(
@@ -27,7 +32,8 @@ export async function POST(req: NextRequest) {
   }
 
   // Remove any non-alphanumeric characters from the filename
-  const bucketName = title.replace(/[^a-z0-9]/gi, '').toLowerCase() +'-'+ userId
+  const bucketName =
+    title.replace(/[^a-z0-9]/gi, '').toLowerCase() + '-' + userId
 
   const client = await clientPromise
   const collection = client.db(dbName).collection('sites')
@@ -61,14 +67,14 @@ export async function POST(req: NextRequest) {
     try {
       //create the images. this function uses Promise.all
       images = await createImages([
-        { 
-          generator: 'stable', 
-          name: 'featureImage', 
-          prompt: featureImagePrompt, 
-          count: 1, 
-          height: '512', 
+        {
+          generator: 'stable',
+          name: 'featureImage',
+          prompt: featureImagePrompt,
+          count: 1,
+          height: '512',
           width: '512',
-          bucketName
+          bucketName,
         },
         {
           generator: 'stable',
@@ -77,7 +83,7 @@ export async function POST(req: NextRequest) {
           count: 1,
           height: '576',
           width: '1024',
-          bucketName
+          bucketName,
         },
         {
           generator: 'stable',
@@ -86,7 +92,7 @@ export async function POST(req: NextRequest) {
           count: 1,
           height: '720',
           width: '720',
-          bucketName
+          bucketName,
         },
       ])
     } catch (error) {

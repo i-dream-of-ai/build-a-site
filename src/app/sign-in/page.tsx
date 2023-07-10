@@ -1,16 +1,15 @@
 import { getServerSession } from 'next-auth'
 import SigninForm from '../components/signin-form'
-import { redirect } from 'next/navigation';
-import { authOptions } from '../api/auth/[...nextauth]/route';
+import { redirect } from 'next/navigation'
+import { authOptions } from '../api/auth/[...nextauth]/route'
 
 export const dynamic = 'force-dynamic'
 
 export default async function SignIn() {
+  const session = await getServerSession(authOptions)
 
-  const session = await getServerSession(authOptions);
-
-  if(session){
-    return redirect('/dashboard');
+  if (session) {
+    return redirect('/dashboard')
   }
 
   return (

@@ -11,15 +11,11 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-
-  const {id} = params;
+  const { id } = params
 
   if (!id) {
     console.error('Error. ID not found.')
-    return NextResponse.json(
-      { error: 'Error. ID not found.' },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'Error. ID not found.' }, { status: 400 })
   }
 
   const token = await getToken({ req })
@@ -44,21 +40,19 @@ export async function GET(
     const client = await clientPromise
     const collection = client.db(dbName).collection('users')
     const user = await collection.findOne({
-      _id: new ObjectId(id)
+      _id: new ObjectId(id),
     })
-    if(!user){
-        return NextResponse.json({ message: "No User found." }, { status: 401 })
+    if (!user) {
+      return NextResponse.json({ message: 'No User found.' }, { status: 401 })
     }
 
     user.model = user.model ? user.model : OpenAIModels[OpenAIModelID.GPT_3_5]
-    delete user.password;
+    delete user.password
 
     return NextResponse.json(user, { status: 200 })
-
   } catch (error) {
     return NextResponse.json({ error }, { status: 500 })
   }
-
 }
 
 export async function DELETE(
@@ -117,11 +111,13 @@ export async function DELETE(
   }
 }
 
-export async function PATCH( req: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } },
+) {
+  const { id } = params
 
-  const { id } = params;
-
-  const { email, model } = await req.json();
+  const { email, model } = await req.json()
 
   const token = await getToken({ req })
   if (!token) {
@@ -138,26 +134,22 @@ export async function PATCH( req: NextRequest, { params }: { params: { id: strin
       { status: 400 },
     )
   }
-  
+
   if (!id) {
-    return NextResponse.json(
-      { error: 'Site ID not found.' },
-      { status: 400 },
-    )
+    return NextResponse.json({ error: 'Site ID not found.' }, { status: 400 })
   }
 
   try {
-
     const client = await clientPromise
     const collection = client.db(dbName).collection('users')
     const response = await collection.findOneAndUpdate(
-      {  _id: new ObjectId(id) },
-      { $set: {email, model} },
-      { returnDocument: 'after' }
-    );
+      { _id: new ObjectId(id) },
+      { $set: { email, model } },
+      { returnDocument: 'after' },
+    )
 
     if (!response.value) {
-      return NextResponse.json({ error: "User not updated." }, { status: 500 })
+      return NextResponse.json({ error: 'User not updated.' }, { status: 500 })
     }
 
     // Respond with the stream
@@ -167,4 +159,3 @@ export async function PATCH( req: NextRequest, { params }: { params: { id: strin
     return NextResponse.json({ error: error }, { status: 500 })
   }
 }
-

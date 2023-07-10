@@ -34,7 +34,8 @@
     "src/app/old.dashboard/page.jsx",
     "src/lib/mongodb.ts",
     "src/app/api/user/index.js",
-    "src/app/api/chat/route.js"
-, "src/ui/alien-invasion.js"  ],
+    "src/app/api/chat/route.js",
+    "src/ui/alien-invasion.js"
+  ],
   "exclude": ["node_modules"]
 }

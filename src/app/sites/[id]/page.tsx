@@ -5,6 +5,5 @@ export default async function Sites({
 }: {
   params: { id: string }
 }) {
-
-  return <SiteForm id={id}/>
+  return <SiteForm id={id} />
 }

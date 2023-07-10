@@ -23,9 +23,10 @@ async function authenticate({ email, password }) {
   }
   const isValidPassword = bcrypt.compareSync(password, user.password)
   if (!isValidPassword) {
-    console.log('user', user)
+    console.error('invalid user password: ', user)
     return false
   }
+  delete user.password
 
   return user
 }
@@ -33,7 +34,7 @@ async function authenticate({ email, password }) {
 async function getAll() {
   const client = await clientPromise
   const userCollection = client.db(dbName).collection('users')
-  return await userCollection.find({})
+  return userCollection.find({})
 }
 
 async function getById(id) {
@@ -57,7 +58,7 @@ async function create(params) {
       email: params.email,
       password: bcrypt.hashSync(params.password, 10),
       role: params.email === 'kitchenbeats@gmail.com' ? 'admin' : 'user',
-      model: OpenAIModels[process.env.NEXT_PUBLIC_DEFAULT_MODEL]
+      model: OpenAIModels[process.env.NEXT_PUBLIC_DEFAULT_MODEL],
     })
     return result
   } catch (error) {

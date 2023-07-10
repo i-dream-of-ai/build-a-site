@@ -17,12 +17,11 @@ let response = {
 }
 
 export async function deleteBucket(bucketName: string) {
-
-  if(!bucketName){
-    response.error = `Could not find a bucket name! ${bucketName}}`;
-    return response;
+  if (!bucketName) {
+    response.error = `Could not find a bucket name! ${bucketName}}`
+    return response
   }
-  
+
   try {
     // List all objects in the bucket
     const listObjectsResponse = await s3Client.send(

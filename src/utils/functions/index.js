@@ -5,7 +5,7 @@ export const runtime = 'edge'
 export const generate_site = {
   name: 'generate_site',
   description:
-    "This function generates quality content and a color palette and then generates a single page website. The AI assistant creates the content, it's not the users job to create the content. The AI will only ask if the user is ready, then generate the site. The AI assistant will not ask for the content itself, since it is the assistants task to create it. The AI assistant doen not need to show the user the content, unless the user asks. The content generated will be inserted into prebuilt website templates for the user, the color palette will be used in the templates by leveraging TailwindCSS. The sections we will provide content for are the hero section, features section, about-us section, testimonials section, contact-us section, and the footer. We have success when we get back a URL containing amazonaws.com. On success we inform the user they can edit and view thier website on the Sites page, located at /sites. Do not link any other URLs.",
+    "This function first generates quality content and a color palette and then generates a website. The AI assistant creates the content, it's not the users job to create or provide the website content. The AI will only ask if the user is ready, then generate the site. The AI assistant will not ask for the content itself, since it is the assistants task to create it. The AI assistant doen not need to show the user the content, unless the user asks. The content generated will be inserted into prebuilt website templates for the user, the color palette will be used in the templates by leveraging TailwindCSS. The sections we will provide content for are the hero section, features section, about-us section, testimonials section, contact-us section, and the footer. We have success when we get back a URL containing amazonaws.com. On success we inform the user they can edit and view thier website on the Sites page, located at /sites. Do not link any other URLs.",
   parameters: {
     type: 'object',
     properties: {
@@ -197,7 +197,9 @@ export async function createStableDiffusionImage(args) {
         body: JSON.stringify({
           key: process.env.STABLE_DIFFUSION_KEY,
           prompt: args.prompt,
-          negative_prompt: args.negativePrompt || 'sex, nude, breasts, butt, tits, sexy, naked',
+          negative_prompt:
+            args.negativePrompt ||
+            'sex, nude, breasts, butt, tits, sexy, naked',
           width: args.width,
           height: args.height,
           samples: args.count || 1,
@@ -206,7 +208,8 @@ export async function createStableDiffusionImage(args) {
           guidance_scale: '7',
           safety_checker: 'yes',
           self_attention: 'no',
-          webhook: process.env.NEXTAUTH_URL+'/api/stable-d-webhook',
+          webhook: process.env.NEXTAUTH_URL + '/api/stable-d-webhook',
+          track_id: args.track_id,
           panorama: 'no',
           enhance_prompt: 'yes',
         }),

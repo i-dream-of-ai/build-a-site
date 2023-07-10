@@ -5,6 +5,7 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import clientPromise from '@/lib/mongodb'
 import { users } from '@/helpers/userApi'
 import { User } from '@/types/user'
+import { OpenAIModels } from '@/types/openai'
 
 declare module 'next-auth' {
   interface Session {
@@ -65,7 +66,15 @@ export const authOptions = {
           throw new Error('Wrong email or password.')
         }
 
-        return { _id: user._id, email: user.email, role: user.role } as any
+        //set model. This is just a fail-safe for older users.
+        const model = user.model || OpenAIModels['gpt-3.5-turbo-0613']
+
+        return {
+          _id: user._id,
+          email: user.email,
+          role: user.role,
+          model: model,
+        } as any
       },
     }),
   ],
@@ -76,6 +85,7 @@ export const authOptions = {
         token.user = user
         token.role = user.role
       }
+
       return token
     },
     session: async ({ session, token }: any) => {
@@ -90,5 +100,5 @@ export const authOptions = {
   },
 } as any
 
-const handler = NextAuth(authOptions);
+const handler = NextAuth(authOptions)
 export { handler as GET, handler as POST }

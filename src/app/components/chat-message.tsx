@@ -36,8 +36,16 @@ export function ChatMessage({ message, ...props }: ChatMessageProps) {
   if (usingFunction) {
     return (
       <div className="px-4 py-2 bg-purple-600 text-white rounded">
-        <Image src="/ufo.svg" width="300" height="300" alt="ufo" className='animate-ufo'/>
-        <div className='text-white font-bold animate-pulse text-4xl text-center mx-auto -mt-8 mb-4'>Generating Site</div>
+        <Image
+          src="/ufo.svg"
+          width="300"
+          height="300"
+          alt="ufo"
+          className="animate-ufo"
+        />
+        <div className="text-white font-bold animate-pulse text-4xl text-center mx-auto -mt-8 mb-4">
+          Generating Site
+        </div>
       </div>
     )
   }

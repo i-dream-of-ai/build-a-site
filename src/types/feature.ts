@@ -1,4 +1,4 @@
 export interface Feature {
-    title: string;
-    content: string;
+  title: string
+  content: string
 }

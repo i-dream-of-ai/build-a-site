@@ -2,7 +2,12 @@
 
 import { Fragment, useState } from 'react'
 import { Menu, Transition } from '@headlessui/react'
-import { IconDotsVertical, IconExternalLink, IconPencil, IconX } from '@tabler/icons-react'
+import {
+  IconDotsVertical,
+  IconExternalLink,
+  IconPencil,
+  IconX,
+} from '@tabler/icons-react'
 import { toast } from 'react-hot-toast'
 import Link from 'next/link'
 import { ListSkeleton } from '@/ui/list-skeleton'
@@ -10,30 +15,32 @@ import { ListSkeleton } from '@/ui/list-skeleton'
 import { useDeleteSite, useSites } from '@/lib/sites'
 
 export function SiteList() {
+  const { data: sites = [], isLoading, isError } = useSites()
 
-  const { data: sites = [], isLoading, isError } = useSites();
-
-  const deleteSiteMutation = useDeleteSite();
+  const deleteSiteMutation = useDeleteSite()
 
   const [isDeleting, setIsDeleting] = useState(false)
 
-  const deleteSite = async (id: string, name:string) => {
+  const deleteSite = async (id: string, name: string) => {
     setIsDeleting(true)
-    const ok = confirm(`Are you sure you want to delete ${name}?`);
-    if(!ok) {
-      setIsDeleting(false);
-      return;
-    };
-    deleteSiteMutation.mutate(id);
+    const ok = confirm(`Are you sure you want to delete ${name}?`)
+    if (!ok) {
+      setIsDeleting(false)
+      return
+    }
+    deleteSiteMutation.mutate(id)
     setIsDeleting(false)
   }
 
-  if (isLoading) return <ListSkeleton />;
+  if (isLoading) return <ListSkeleton />
 
-  if(!sites?.length && !isLoading){
+  if (!sites?.length && !isLoading) {
     return (
       <div className="">
-        <Link href="dashboard" className="bg-purple-600 text-white hover:bg-purple-500 px-4 py-2 rounded-md">
+        <Link
+          href="dashboard"
+          className="bg-purple-600 text-white hover:bg-purple-500 px-4 py-2 rounded-md"
+        >
           Generate a new site
         </Link>
       </div>
@@ -60,14 +67,16 @@ export function SiteList() {
               target="_blank"
               className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1"
             >
-              <span>View</span> <IconExternalLink className='h-5 w-5'/> <span className="sr-only">, {site.bucketName}</span>
+              <span>View</span> <IconExternalLink className="h-5 w-5" />{' '}
+              <span className="sr-only">, {site.bucketName}</span>
             </a>
-              <Link
-                href={`/sites/${site._id}`}
-                className='flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1'
-              >
-                <span>Edit</span> <IconPencil className='h-5 w-5'/> <span className="sr-only">, {site.bucketName}</span>
-              </Link>
+            <Link
+              href={`/sites/${site._id}`}
+              className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1"
+            >
+              <span>Edit</span> <IconPencil className="h-5 w-5" />{' '}
+              <span className="sr-only">, {site.bucketName}</span>
+            </Link>
             <Menu as="div" className="relative flex-none">
               <Menu.Button className="-m-2.5 block p-2.5 text-purple-400 hover:text-purple-700">
                 <span className="sr-only">Open options</span>
@@ -83,16 +92,15 @@ export function SiteList() {
                 leaveTo="transform opacity-0 scale-95"
               >
                 <Menu.Items className="absolute right-0 z-10 mt-2 w-28 origin-top-right rounded-md bg-white p-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none">
-                  
                   <Menu.Item>
                     {({ active }) => (
                       <button
                         type="button"
                         disabled={isDeleting}
                         onClick={() => deleteSite(site._id, site.content.title)}
-                        className='disabled:opacity-40 disabled:cursor-wait rounded-md flex items-center justify-center gap-1 px-2 py-1 text-sm leading-6 text-white bg-red-600 w-full hover:bg-red-500'
+                        className="disabled:opacity-40 disabled:cursor-wait rounded-md flex items-center justify-center gap-1 px-2 py-1 text-sm leading-6 text-white bg-red-600 w-full hover:bg-red-500"
                       >
-                        Delete <IconX className='w-5 h-5'/>
+                        Delete <IconX className="w-5 h-5" />
                         <span className="sr-only">, {site.bucketName}</span>
                       </button>
                     )}

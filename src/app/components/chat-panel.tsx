@@ -50,7 +50,7 @@ export function ChatPanel({
             )
           )}
         </div> */}
-        {!isLoading && messages && messages.length > 1? (
+        {!isLoading && messages && messages.length > 1 ? (
           <div className="space-y-4 bg-background px-4 py-2 shadow-lg rounded-xl sm:border md:py-4 mb-4 bg-black">
             <PromptForm
               onSubmit={async (value) => {

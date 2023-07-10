@@ -7,7 +7,7 @@ import {
   PutBucketWebsiteCommand,
 } from '@aws-sdk/client-s3'
 import { deleteBucket } from './delete'
-import { extname } from 'path';
+import { extname } from 'path'
 
 const s3Client = new S3Client({ region: process.env.AWS_REGION })
 
@@ -84,20 +84,20 @@ export async function uploadImagesToS3(
   try {
     for (const [name, imageUrls] of Object.entries(images)) {
       for (let i = 0; i < imageUrls.length; i++) {
-        let imageBuffer;
-        let contentType;
+        let imageBuffer
+        let contentType
 
         // Check if the image is a URL
         if (imageUrls[i].startsWith('http')) {
           // Download the image
-          const response = await fetch(imageUrls[i]);
-          const arrayBuffer = await response.arrayBuffer();
-          imageBuffer = Buffer.from(arrayBuffer);
-          contentType = `image/${extname(imageUrls[i]).slice(1)}`;
+          const response = await fetch(imageUrls[i])
+          const arrayBuffer = await response.arrayBuffer()
+          imageBuffer = Buffer.from(arrayBuffer)
+          contentType = `image/${extname(imageUrls[i]).slice(1)}`
         } else {
           // Convert the base64 string to a Buffer
-          imageBuffer = Buffer.from(imageUrls[i], 'base64');
-          contentType = 'image/png';
+          imageBuffer = Buffer.from(imageUrls[i], 'base64')
+          contentType = 'image/png'
         }
 
         const params = {
@@ -109,7 +109,9 @@ export async function uploadImagesToS3(
         }
         await s3Client.send(new PutObjectCommand(params))
         // Replace the image URL in the images object with the S3 URL
-        images[name][i] = `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${name}-${i}${extname(imageUrls[i])}`
+        images[name][i] = `https://${bucketName}.s3.${
+          process.env.AWS_REGION
+        }.amazonaws.com/${name}-${i}${extname(imageUrls[i])}`
       }
     }
     return images

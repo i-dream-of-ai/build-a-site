@@ -1,22 +1,28 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { User, UserUpdates } from '@/types/user';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { User, UserUpdates } from '@/types/user'
 
-export const fetchProfile = async (id: string): Promise<User>=> {
+export const fetchProfile = async (id: string): Promise<User> => {
   try {
-    const res = await fetch(`/api/user/${id}`);
+    const res = await fetch(`/api/user/${id}`)
     if (!res.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok')
     }
-    return await res.json();
+    return await res.json()
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to fetch profile: ${error.message}`);
+      throw new Error(`Failed to fetch profile: ${error.message}`)
     }
-    throw error;
+    throw error
   }
-};
+}
 
-const updateUser = async ({ id, updates }: { id: string; updates: UserUpdates }): Promise<User> => {
+const updateUser = async ({
+  id,
+  updates,
+}: {
+  id: string
+  updates: UserUpdates
+}): Promise<User> => {
   try {
     const res = await fetch(`/api/user/${id}`, {
       method: 'PATCH',
@@ -24,78 +30,93 @@ const updateUser = async ({ id, updates }: { id: string; updates: UserUpdates })
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(updates),
-    });
+    })
     if (!res.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok')
     }
-    return res.json();
+    return res.json()
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to update user: ${error.message}`);
+      throw new Error(`Failed to update user: ${error.message}`)
     }
-    throw error;
+    throw error
   }
-};
+}
 
 const deleteUser = async (id: string): Promise<void> => {
   try {
     const res = await fetch(`/api/user/${id}`, {
       method: 'DELETE',
-    });
+    })
     if (!res.ok) {
-      throw new Error('Network response was not ok');
+      throw new Error('Network response was not ok')
     }
   } catch (error: unknown) {
     if (error instanceof Error) {
-      throw new Error(`Failed to delete user: ${error.message}`);
+      throw new Error(`Failed to delete user: ${error.message}`)
     }
-    throw error;
+    throw error
   }
-};
+}
 
 export const useUserProfile = (id: string, enabled: boolean) => {
-  return useQuery<User, Error>(['userProfile', id], () => {
-    return fetchProfile(id);
-  }, {
-    onError: (error: unknown) => {
-      if (error instanceof Error) {
-        console.error(`Error fetching user profile: ${error.message}`);
-      }
+  return useQuery<User, Error>(
+    ['userProfile', id],
+    () => {
+      return fetchProfile(id)
     },
-    enabled,
-  });
-};
+    {
+      onError: (error: unknown) => {
+        if (error instanceof Error) {
+          console.error(`Error fetching user profile: ${error.message}`)
+        }
+      },
+      enabled,
+    },
+  )
+}
 
 export const useUpdateUser = () => {
-  const queryClient = useQueryClient();
-  return useMutation<User, Error, { id: string; updates: UserUpdates }, { previousUser: User | undefined }>(updateUser, {
+  const queryClient = useQueryClient()
+  return useMutation<
+    User,
+    Error,
+    { id: string; updates: UserUpdates },
+    { previousUser: User | undefined }
+  >(updateUser, {
     onMutate: async ({ id, updates }) => {
-      await queryClient.cancelQueries(['userProfile', id]);
-      const previousUser = queryClient.getQueryData<User>(['userProfile', id]);
-      queryClient.setQueryData(['userProfile', id], { ...previousUser, ...updates });
-      return { previousUser };
+      await queryClient.cancelQueries(['userProfile', id])
+      const previousUser = queryClient.getQueryData<User>(['userProfile', id])
+      queryClient.setQueryData(['userProfile', id], {
+        ...previousUser,
+        ...updates,
+      })
+      return { previousUser }
     },
     onError: (error, variables, context) => {
       if (context?.previousUser) {
-        queryClient.setQueryData(['userProfile', context.previousUser._id], context.previousUser);
+        queryClient.setQueryData(
+          ['userProfile', context.previousUser._id],
+          context.previousUser,
+        )
       }
     },
     onSettled: (data, error, { id }) => {
-      queryClient.invalidateQueries(['userProfile', id]);
+      queryClient.invalidateQueries(['userProfile', id])
     },
-  });
-};
+  })
+}
 
 export const useDeleteUser = () => {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient()
   return useMutation<void, Error, string>(deleteUser, {
     onSuccess: (data, id) => {
-      queryClient.invalidateQueries(['userProfile', id]);
+      queryClient.invalidateQueries(['userProfile', id])
     },
     onError: (error: unknown) => {
       if (error instanceof Error) {
-        console.error(`Error deleting user: ${error.message}`);
+        console.error(`Error deleting user: ${error.message}`)
       }
     },
-  });
-};
+  })
+}
