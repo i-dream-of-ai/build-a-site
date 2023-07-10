@@ -39,6 +39,11 @@ export default function SiteForm({ id }: SiteProps) {
     featureImageURL: '',
     aboutUsImageURL: '',
     testimonialImageURL: '',
+    contactUsTitle: '',
+    contactUsContent: '',
+    contactUsPhone: '',
+    contactUsEmail: '',
+    contactUsAddress: '',
     copywrite: '',
   })
 
@@ -72,6 +77,11 @@ export default function SiteForm({ id }: SiteProps) {
       featureImageURL: '',
       aboutUsImageURL: '',
       testimonialImageURL: '',
+      contactUsTitle: '',
+      contactUsContent: '',
+      contactUsPhone: '',
+      contactUsEmail: '',
+      contactUsAddress: '',
       copywrite: '',
     },
     href: '',
@@ -86,7 +96,6 @@ export default function SiteForm({ id }: SiteProps) {
         console.error('There was an error getting your site: ', data)
         throw new Error('There was an error getting your site.')
       }
-      console.log(data)
       setSite(data.site)
       setSiteData(data.site.content)
     } catch (error) {
@@ -728,6 +737,138 @@ export default function SiteForm({ id }: SiteProps) {
                 </React.Fragment>
               ))}
             </div>
+          </div>
+        </div>
+
+        <div className="border-b border-white/10 pb-12">
+          <h2 className="text-base font-semibold leading-7 text-white">
+            Contact Us Section
+          </h2>
+          <p className="mt-1 text-sm leading-6 text-gray-400">
+            A section to inform visitors how to contact you.
+          </p>
+
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+            <div className="sm:col-span-6">
+              <label
+                htmlFor="contactus-title"
+                className="block text-sm font-medium leading-6 text-white"
+              >
+                Contact Us Title
+              </label>
+              <div className="mt-2">
+                <div className="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500">
+                  <input
+                    type="text"
+                    name="contactus-title"
+                    id="contactus-title"
+                    value={siteData.contactUsTitle || ''}
+                    onChange={(e) =>
+                      handleFieldChange('contactUsTitle', e.target.value)
+                    }
+                    className="flex-1 border-0 bg-transparent p-1.5 text-white focus:ring-0 sm:text-sm sm:leading-6"
+                    placeholder="Contact Us"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="contactus-content"
+                className="block text-sm font-medium leading-6 text-white"
+              >
+                Contact Us Content
+              </label>
+              <div className="mt-2">
+                <textarea
+                  id="contactus-content"
+                  name="contactus-content"
+                  rows={4}
+                  value={siteData.contactUsContent || ''}
+                  onChange={(e) =>
+                    handleFieldChange('contactUsContent', e.target.value)
+                  }
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-400">
+                Write a short call to action for your contact us content.
+              </p>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="contactus-email"
+                className="block text-sm font-medium leading-6 text-white"
+              >
+                Contact Us Email
+              </label>
+              <div className="mt-2">
+                <input
+                  type='email'
+                  id="contactus-email"
+                  name="contactus-email"
+                  value={siteData.contactUsEmail || ''}
+                  onChange={(e) =>
+                    handleFieldChange('contactUsEmail', e.target.value)
+                  }
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-400">
+                Allow visitors to contact you via email.
+              </p>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="contactus-phone"
+                className="block text-sm font-medium leading-6 text-white"
+              >
+                Contact Us Phone
+              </label>
+              <div className="mt-2">
+                <input
+                  type='tel'
+                  id="contactus-phone"
+                  name="contactus-phone"
+                  value={siteData.contactUsPhone || ''}
+                  onChange={(e) =>
+                    handleFieldChange('contactUsPhone', e.target.value)
+                  }
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-400">
+                Allow visitors to contact you via phone.
+              </p>
+            </div>
+
+            <div className="col-span-full">
+              <label
+                htmlFor="contactus-address"
+                className="block text-sm font-medium leading-6 text-white"
+              >
+                Contact Us Address
+              </label>
+              <div className="mt-2">
+                <input
+                  type='text'
+                  id="contactus-address"
+                  name="contactus-address"
+                  value={siteData.contactUsAddress || ''}
+                  onChange={(e) =>
+                    handleFieldChange('contactUsAddress', e.target.value)
+                  }
+                  className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
+                />
+              </div>
+              <p className="mt-3 text-sm leading-6 text-gray-400">
+                Share your address with visitors.
+              </p>
+            </div>
+
           </div>
         </div>
 

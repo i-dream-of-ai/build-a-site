@@ -5,50 +5,10 @@ import { generateFooter } from './footer'
 import { generateNavbar } from './navbar'
 import { generateHeroSection } from './hero'
 import { generateTestimonialSection } from './testimonial'
+import {SiteContent} from '@/types/site' 
 
-interface GenerateHtmlProps {
-  title: string
-  heroTitle: string
-  heroContent: string
-  navbarItems: Link[]
-  featureSectionTagline: string
-  featureSectionTitle: string
-  featureSectionContent: string
-  features: Feature[]
-  aboutUsTitle: string
-  aboutUsContent: string
-  testimonial: Testimonial
-  contactUs: string
-  copywrite: string
-  colors: {
-    mainTextColor: string
-    secondaryTextColor: string
-    mainBackgroundColor: string
-    secondaryBackgroundColor: string
-    gradientFromColor: string
-    gradientToColor: string
-  }
-  featureImageURL: string
-  aboutUsImageURL: string
-  testimonialImageURL: string
-}
-
-interface Feature {
-  title: string
-  content: string
-}
-
-export interface Link {
-  name: string
-  href: string
-}
-
-interface Testimonial {
-  name: string
-  content: string
-}
-
-export async function generateHTML(props: GenerateHtmlProps) {
+export async function generateHTML(props: SiteContent) {
+  
   const {
     colors,
     title,
@@ -62,7 +22,11 @@ export async function generateHTML(props: GenerateHtmlProps) {
     aboutUsTitle,
     aboutUsContent,
     testimonial,
-    contactUs,
+    contactUsTitle,
+    contactUsContent,
+    contactUsPhone = '',
+    contactUsEmail = '',
+    contactUsAddress = '',
     copywrite,
     featureImageURL,
     aboutUsImageURL,
@@ -100,7 +64,14 @@ export async function generateHTML(props: GenerateHtmlProps) {
     colors,
   })
 
-  const contactUsHTML = generateContactUsSection({ colors })
+  const contactUsHTML = generateContactUsSection({ 
+    colors,
+    contactUsTitle,
+    contactUsContent,
+    contactUsPhone,
+    contactUsEmail,
+    contactUsAddress
+  })
 
   const footerHTML = generateFooter({ copywrite, colors })
 

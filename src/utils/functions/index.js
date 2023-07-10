@@ -124,6 +124,16 @@ export const generate_site = {
         description:
           "Return a professional image prompt that will be used with an AI image generator. The gender of the image should match the testimonial persons gender. Always use the following prompt template for testimonials and only change the gender to match the testimonial gender. Prompt Template: 'realistic and detailed close up portrait ((female)), DSLR photography, sharp focus,((cinematic lighting)), f/1.4, ISO 200, 1/160s, 8K, RAW, unedited, symmetrical balance, in-frame'",
       },
+      contactUsTitle: {
+        type: 'string',
+        description:
+          "The header title of the contact us section. It should be a short and only 2 or 3 words. Don't ask the user for this. It should be short. Example: 'Contact Us'.",
+      },
+      contactUsContent: {
+        type: 'string',
+        description:
+          "A simple call to action paragraph for the contact us section. It should be professional and to the point. Generate this based on the information you have about the business. Don't ask the user for this.",
+      },
       copywrite: {
         type: 'string',
         description: 'The copywrite text for the footer of the website.',
@@ -142,6 +152,8 @@ export const generate_site = {
       'aboutUsImagePrompt',
       'aboutUsTitle',
       'aboutUsContent',
+      'contactUsTitle',
+      'contactUsContent',
       'testimonialImagePrompt',
       'testimonial',
       'copywrite',
@@ -162,13 +174,7 @@ export async function createSite(args) {
       },
     )
 
-    let data
-    try {
-      data = await response.json()
-    } catch (error) {
-      console.error('Error parsing createSite response as JSON:', error)
-      throw new Error('Error parsing createSite response as JSON')
-    }
+    const data = await response.json();
 
     if (!response.ok) {
       const message = `An error has occured in createSite Fetch: ${JSON.stringify(
@@ -177,9 +183,10 @@ export async function createSite(args) {
       console.error(message)
       return message
     }
-    return data
+
+    return data;
   } catch (error) {
-    console.log('error in createSite: ', error)
+    console.log('error in createSite function: ', error)
     throw new Error(error)
   }
 }

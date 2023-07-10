@@ -86,7 +86,7 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
                 { $set: { ...fetchResponse } },
                 { upsert: true },
               )
-              images[name].push('/android-chrome-512x512.png')
+              images[name].push('')
               //throw new Error(`Your image is being created by alien artisans of the highest caliber. This may take a minute or two. Once the task is completed, we will beam it into your account. ${name}`)
             }
           }

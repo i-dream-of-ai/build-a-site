@@ -16,5 +16,5 @@ export default withAuth({
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/dashboard', '/sites', '/sites:id'],
+  matcher: ['/dashboard', '/sites', '/sites:id', '/account'],
 }

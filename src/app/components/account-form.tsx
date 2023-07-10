@@ -27,7 +27,7 @@ export const AccountForm: React.FC<AccountFormProps> = ({ user }) => {
     if (userData) setFormState(userData)
   }, [userData])
 
-  const updateUserMutation = useUpdateUser()
+  const updateUserMutation = useUpdateUser();
 
   const handleModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedModelId = e.target.value as OpenAIModelID

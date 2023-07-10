@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { User, UserUpdates } from '@/types/user'
+import { toast } from 'react-hot-toast'
 
 export const fetchProfile = async (id: string): Promise<User> => {
   try {
@@ -100,6 +101,10 @@ export const useUpdateUser = () => {
           context.previousUser,
         )
       }
+      toast.error('There was an error while updating your profile.')
+    },
+    onSuccess: () => {
+      toast.success('Profile updated successfully.')
     },
     onSettled: (data, error, { id }) => {
       queryClient.invalidateQueries(['userProfile', id])

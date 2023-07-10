@@ -5,7 +5,7 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import clientPromise from '@/lib/mongodb'
 import { users } from '@/helpers/userApi'
 import { User } from '@/types/user'
-import { OpenAIModels } from '@/types/openai'
+import { OpenAIModelID, OpenAIModels } from '@/types/openai'
 
 declare module 'next-auth' {
   interface Session {
@@ -67,7 +67,7 @@ export const authOptions = {
         }
 
         //set model. This is just a fail-safe for older users.
-        const model = user.model || OpenAIModels['gpt-3.5-turbo-0613']
+        const model = user.model || OpenAIModels[OpenAIModelID.GPT_3_5]
 
         return {
           _id: user._id,
