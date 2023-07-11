@@ -29,8 +29,8 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className="[color-scheme:dark]">
-      <body className="bg-gray-1100 overflow-y-scroll bg-[url('/grid.svg')] pb-36">
+    <html lang="en" className="[color-scheme:dark] w-full">
+      <body className="bg-gray-1100 overflow-y-scroll bg-[url('/grid.svg')] pb-36 w-full">
         <Toaster />
         <NextAuthProvider>
           <RQProvider>

@@ -250,12 +250,12 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
               <button
                 type="submit"
                 //disabled={!businessName || !productType || !colorType}
-                className={`py-2 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white gap-1 hover:animate-none ${
+                className={`text-sm md:text-base w-full mt-6 h-11 px-4 rounded-md flex items-center justify-center bg-purple-600 cursor-pointer hover:bg-purple-700 text-white gap-1 hover:animate-none ${
                   businessName && productType && colorType && 'animate-pulse'
                 }`}
               >
-                <IconAugmentedReality className="hover:animate-ping" /> Start
-                Mysterious AI Generator
+                <IconAugmentedReality className="hover:animate-ping" /> 
+                Start Mysterious AI Generator
               </button>
             </form>
           </div>
@@ -264,7 +264,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
       <div className={`${isLoading ? "w-full relative":"hidden"}`}>
       <div className='absolute left-7 bottom-1 h-5 animate-pulse'>Using Alien Tech to generate content...</div>
           <div className='animate-ufo animate-pulse h-5 mx-auto bg-gradient-to-r from-blue-900 via-purple-800 to-purple-600' />
-      </div>s
+      </div>
 
       <ChatPanel
         id={id}

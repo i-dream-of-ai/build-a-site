@@ -194,7 +194,7 @@ export default function SiteForm({ id }: SiteProps) {
     <form onSubmit={updateSite}>
       <div className="space-y-12">
         <div className="border-b border-white/10 pb-12">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col-reverse sm:flex-row gap-4 justify-between items-center">
             <div>
               <h2 className="text-base font-semibold leading-7 text-white">
                 Edit Website Content
@@ -570,7 +570,7 @@ export default function SiteForm({ id }: SiteProps) {
                       Regenerate Image <IconRefresh className="w-5 h-5" />{' '}
                     </button>
                     <img
-                      className="rounded-md max-w-[512px]"
+                      className="rounded-md max-w-[512px] aspect-auto w-full"
                       src={siteData.featureImageURL}
                     />
                   </div>

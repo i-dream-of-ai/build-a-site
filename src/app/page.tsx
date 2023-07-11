@@ -29,9 +29,9 @@ export default async function Page() {
         )}
       </div>
       <iframe
-        className="mx-auto border rounded-md"
-        width="560"
-        height="315"
+        className="mx-auto border rounded-md max-w-md aspect-video"
+        width="100%"
+        // height="315"
         src="https://www.youtube.com/embed/fxj5PWgWMWU?controls=0"
         title=""
         frameBorder="0"
