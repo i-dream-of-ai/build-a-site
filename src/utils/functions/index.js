@@ -12,7 +12,7 @@ export const generate_site = {
       colors: {
         type: 'object',
         description:
-          "The main brand colors of the website. Return an object of TailwindCSS colors. Use professional color pallets for brands. The colors should look great together. The text color and background color should have good contrast so the text is visible, and fully accessible. Only use TailwindCSS colors that exist in the tailwind library. for the gradient colors, use the main background color as the 'from color', and choose a sutiable 'to color' based on the main color. Ask the user what kind of colors they like if they dont tell you. Example { mainTextColor: 'bg-blue-400'} ",
+          "The main brand colors of the website. Return an object of TailwindCSS colors. Use professional color pallets for brands. The colors should look great together. The text color and background color should have good contrast so the text is visible, and fully accessible. Only use TailwindCSS colors that exist in the tailwind library. for the gradient colors, use the main background color as the 'from color', and choose a sutiable 'to color' based on the main color. Ask the user what kind of colors they like if they dont tell you. Example { mainTextColor: 'bg-blue-400'}. IMPORTANT: ALWAYS USE HIGH CONTRAST IN THE MAIN AND SECONDARY COLORS TEXT AND BACKGROUNDS! The main text will be over the main background colors, and the secondary text will be over the secondary background. So always make sure they contrast well for good accessibility.",
         properties: {
           mainTextColor: { type: 'string' },
           secondaryTextColor: { type: 'string' },

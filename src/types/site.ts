@@ -31,6 +31,8 @@ export interface SiteContent {
   contactUsEmail?: string
   contactUsAddress?: string
   copywrite: string
+  metaDescription?: string
+  metaAuthor?: string
 }
 
 export interface Site {
@@ -39,4 +41,9 @@ export interface Site {
   userId: string
   content: SiteContent
   href: string
+}
+
+export interface Link {
+  href: string
+  name: string
 }

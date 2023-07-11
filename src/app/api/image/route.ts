@@ -72,8 +72,10 @@ export async function POST(req: NextRequest) {
 
     await uploadImagesToS3(images, site.bucketName)
 
+    const timestamp = Date.now();
+
     const keys = Object.keys(images)
-    let value = images[keys[0]] + '?version=' + getRandomInt(100, 10000)
+    let value = images[keys[0]] + '?' + timestamp
 
     await collection.updateOne(
       {

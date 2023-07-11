@@ -33,7 +33,7 @@ export function generateTestimonialSection({
               </blockquote>
             </div>
             <div class="col-end-1 w-16 lg:row-span-4 lg:w-52">
-              <img class="rounded-full bg-indigo-50" src="${testimonialImageURL}" alt="testimonial image">
+              <img class="rounded-full bg-indigo-50" src="${testimonialImageURL}" alt="testimonial image" width="208" height="208">
             </div>
             <figcaption class="text-base lg:col-start-1 lg:row-start-3">
               <div class="font-semibold text-gray-900">${testimonial.name}</div>

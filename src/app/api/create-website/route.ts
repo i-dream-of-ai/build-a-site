@@ -1,9 +1,11 @@
 import clientPromise from '@/lib/mongodb'
+import { generateCSS } from '@/utils/generate/css'
 import { generateHTML } from '@/utils/generate/html'
 import { createImages } from '@/utils/generate/images'
 import {
   createBucket,
   setBucketPolicy,
+  uploadCSSToS3,
   uploadHTMLToS3,
   uploadImagesToS3,
 } from '@/utils/s3'
@@ -14,8 +16,9 @@ import { NextRequest, NextResponse } from 'next/server'
 const dbName = process.env.MONGODB_DB
 
 export async function POST(req: NextRequest) {
-  const body = await req.json()
+  const body = await req.json();
 
+  //split out a few of the args for use
   const {
     title,
     userId,
@@ -109,16 +112,30 @@ export async function POST(req: NextRequest) {
       }
     }
 
+    //TODO: maybe add a check for the images, and add a placeholder if no image?
+
+    //upload the generated image files to the bucket
     await uploadImagesToS3(images, bucketName)
 
-    body.args.featureImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/featureImage-0.png`
-    body.args.aboutUsImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/aboutUsImage-0.png`
-    body.args.testimonialImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/testimonialImage-0.png`
+    //use a timestamp to always bust cache
+    const timestamp = Date.now();
+    body.args.featureImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/featureImage-0.png?${timestamp}`
+    body.args.aboutUsImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/aboutUsImage-0.png?${timestamp}`
+    body.args.testimonialImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/testimonialImage-0.png?${timestamp}`
 
-    const { html } = await generateHTML(body.args)
+    //generates the html using the content and templates
+    const { html } = await generateHTML(body.args, bucketName);
 
+    //uses POSTcss to generate the tailwind css
+    const css = await generateCSS(html);
+
+    //takes the generated css and uploads it as a file to the bucket
+    await uploadCSSToS3(css, bucketName);
+
+    //uploads the generated HTML and uploads it as an index.html file
     const href = await uploadHTMLToS3(html, bucketName)
 
+    //saves the site data to the DB
     const data = await collection.insertOne({
       bucketName: bucketName,
       userId: new ObjectId(userId),
@@ -127,7 +144,7 @@ export async function POST(req: NextRequest) {
     })
 
     return NextResponse.json(
-      { message: 'Website created successfully', url: href },
+      { message: 'Website created successfully!', url: 'The website URL is: '+href },
       { status: 200 },
     )
   } catch (error) {

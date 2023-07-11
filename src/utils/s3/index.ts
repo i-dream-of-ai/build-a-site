@@ -105,7 +105,7 @@ export async function uploadImagesToS3(
           Key: `${name}-${i}${extname(imageUrls[i])}`,
           Body: imageBuffer,
           ContentType: contentType,
-          CacheControl: 'max-age=3600',
+          CacheControl: 'max-age=31536000',
         }
         await s3Client.send(new PutObjectCommand(params))
         // Replace the image URL in the images object with the S3 URL
@@ -133,7 +133,7 @@ export async function uploadHTMLToS3(html: string, bucketName: string) {
       Key: `index.html`,
       Body: html,
       ContentType: 'text/html',
-      CacheControl: 'max-age=3600',
+      CacheControl: 'max-age=31536000',
     }
 
     // Upload the HTML
@@ -149,5 +149,28 @@ export async function uploadHTMLToS3(html: string, bucketName: string) {
     console.log('deleteBucketResponse', deleteBucketResponse)
 
     throw new Error(`Error uploading file: ${err}`)
+  }
+}
+
+export async function uploadCSSToS3(css: string, bucketName: string): Promise<string> {
+
+  // Create a PutObjectCommand
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: 'style.css',
+    Body: css,
+    ContentType: 'text/css',
+    CacheControl: 'max-age=31536000',
+  });
+
+  try {
+    // Send the PutObjectCommand
+    const response = await s3Client.send(command);
+
+    // Return the location of the uploaded CSS file
+    return `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/style.css`;
+  } catch (err) {
+    console.error(err);
+    throw err;
   }
 }

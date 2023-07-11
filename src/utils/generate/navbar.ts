@@ -1,4 +1,4 @@
-import { Link } from './html'
+import { Link } from "@/types/site"
 
 interface NavbarSectionProps {
   title: string

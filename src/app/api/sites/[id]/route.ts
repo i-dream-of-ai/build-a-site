@@ -144,7 +144,7 @@ export async function PATCH(
 
   try {
     //create html
-    const { html } = await generateHTML(siteData)
+    const { html } = await generateHTML(siteData, bucketName)
 
     //update file in bucket
     await uploadHTMLToS3(html, bucketName)
