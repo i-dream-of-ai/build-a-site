@@ -41,6 +41,7 @@ export interface Site {
   userId: string
   content: SiteContent
   href: string
+  domain?: string
 }
 
 export interface Link {

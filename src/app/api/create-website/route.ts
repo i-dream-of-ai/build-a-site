@@ -124,7 +124,8 @@ export async function POST(req: NextRequest) {
     body.args.testimonialImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/testimonialImage-0.png?${timestamp}`
 
     //generates the html using the content and templates
-    const { html } = await generateHTML(body.args, bucketName);
+    //use false for hasSSL because we are using default http bucket
+    const { html } = await generateHTML(body.args, bucketName, false);
 
     //uses POSTcss to generate the tailwind css
     const css = await generateCSS(html);

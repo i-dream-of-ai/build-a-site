@@ -62,21 +62,22 @@ export function SiteList() {
             </div>
           </div>
           <div className="flex flex-none items-center gap-x-4">
-            <a
-              href={site.href}
-              target="_blank"
-              className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1"
-            >
-              <span>View</span> <IconExternalLink className="h-5 w-5" />{' '}
-              <span className="sr-only">, {site.bucketName}</span>
-            </a>
+            
             <Link
               href={`/sites/${site._id}`}
-              className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1"
+              className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1 w-24 justify-center"
             >
               <span>Edit</span> <IconPencil className="h-5 w-5" />{' '}
               <span className="sr-only">, {site.bucketName}</span>
             </Link>
+            <a
+              href={site.href}
+              target="_blank"
+              className="flex items-center rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white shadow-sm ring-1 ring-inset ring-purple-800 hover:bg-purple-500 gap-1 w-24 justify-center"
+            >
+              <span>View</span> <IconExternalLink className="h-5 w-5" />{' '}
+              <span className="sr-only">, {site.bucketName}</span>
+            </a>
             <Menu as="div" className="relative flex-none">
               <Menu.Button className="-m-2.5 block p-2.5 text-purple-400 hover:text-purple-700">
                 <span className="sr-only">Open options</span>

@@ -261,6 +261,10 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
           </div>
         )}
       </div>
+      <div className={`${isLoading ? "w-full relative":"hidden"}`}>
+      <div className='absolute left-7 bottom-1 h-5 animate-pulse'>Using Alien Tech to generate content...</div>
+          <div className='animate-ufo animate-pulse h-5 mx-auto bg-gradient-to-r from-blue-900 via-purple-800 to-purple-600' />
+      </div>s
 
       <ChatPanel
         id={id}

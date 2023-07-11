@@ -14,12 +14,12 @@ interface ContactUsSectionProps {
 
 export function generateContactUsSection({ colors, contactUsTitle, contactUsContent, contactUsPhone, contactUsEmail, contactUsAddress }: ContactUsSectionProps) {
   return `
-      <section class="w-full ${colors.secondaryBackgroundColor}/50" id="contact-us">
+      <section class="w-full bg-white" id="contact-us">
       <div class="relative isolate">
       
         <div class="relative px-6 pb-20 pt-24 sm:pt-32 lg:static lg:px-8 lg:py-48">
           <div class="mx-auto max-w-xl">
-            <div class="absolute inset-y-0 left-0 -z-10 w-full overflow-hidden">
+            <div class="absolute inset-y-0 left-0 -z-10 w-full overflow-hidden ${colors.mainBackgroundColor}">
               <svg class="absolute inset-0 h-full w-full stroke-gray-200 [mask-image:radial-gradient(100%_100%_at_top_right,white,transparent)]" aria-hidden="true">
                 <defs>
                   <pattern id="83fd4e5a-9d52-42fc-97b6-718e5d7ee527" width="200" height="200" x="100%" y="-1" patternUnits="userSpaceOnUse">

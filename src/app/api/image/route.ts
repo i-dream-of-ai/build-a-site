@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
           count: 1,
           width: width,
           height: height,
-          bucketName: site.bucketName,
+          bucketName: site.domain || site.bucketName,
         },
       ])
     } catch (error) {
@@ -70,12 +70,18 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await uploadImagesToS3(images, site.bucketName)
+    await uploadImagesToS3(images, site.domain || site.bucketName)
 
     const timestamp = Date.now();
 
-    const keys = Object.keys(images)
-    let value = images[keys[0]] + '?' + timestamp
+    const keys = Object.keys(images);
+    
+    let value 
+    if(site.domain){
+      value = `https://${site.domain}/`+images[keys[0]] + '?' + timestamp
+    } else {
+      value = `http://${site.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/`+images[keys[0]] + '?' + timestamp
+    }
 
     await collection.updateOne(
       {

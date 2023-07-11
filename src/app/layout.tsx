@@ -40,9 +40,9 @@ export default async function RootLayout({
                 <div className="rounded-lg bg-vc-border-gradient p-px shadow-lg shadow-black/20">
                   <div className="rounded-lg bg-black">
                     <div className="flex gap-x-1 text-sm font-medium p-4">
-                      <span className="px-2 text-gray-400">
-                        Build a website with AI! ** Please Note: This is a POV,
-                        and site may be deleted once we launch our final
+                      <span className="px-2 text-gray-400 mx-auto">
+                        ** Please Note: This is a BETA version,
+                        and your sites may be deleted when we launch our final
                         product! **
                       </span>
                     </div>

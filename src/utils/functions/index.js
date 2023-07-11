@@ -109,7 +109,7 @@ export const generate_site = {
           name: {
             type: 'string',
             description:
-              'The name of the person who write the testimonial for the business. Never use Jane Doe or John Doe. Be creative with the name.',
+              'The name of the person who write the testimonial for the business. Never use Jane Doe or John Doe or Jane Smith or John Smith. Be creative with the name, and do not use common names.',
           },
           content: {
             type: 'string',

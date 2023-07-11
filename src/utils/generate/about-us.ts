@@ -17,7 +17,7 @@ export function generateAboutUsSection({
   aboutUsImageURL,
 }: AboutUsSectionProps): string {
   return `
-    <div class="relative ${colors.mainBackgroundColor}/30" id="about-us">
+    <div class="relative ${colors.mainBackgroundColor}" id="about-us">
       <div class="relative h-80 overflow-hidden ${colors.secondaryBackgroundColor} md:absolute md:left-0 md:h-full md:w-1/3 lg:w-1/2">
         <img class="h-full w-full object-cover bg-blend-saturation" src="${aboutUsImageURL}" alt="">
         <svg viewBox="0 0 926 676" aria-hidden="true" class="absolute -bottom-24 left-24 w-[57.875rem] transform-gpu blur-[118px]">

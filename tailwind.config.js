@@ -11,6 +11,9 @@ module.exports = {
   darkMode: 'class',
   theme: {
     extend: {
+      maskImage: {
+        'radial': 'radial-gradient(100% 100% at top right, white, transparent)'
+      },
       backgroundImage: ({ theme }) => ({
         'vc-border-gradient': `radial-gradient(at left top, ${theme(
           'colors.gray.500',

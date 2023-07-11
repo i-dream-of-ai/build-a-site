@@ -7,7 +7,7 @@ import { generateHeroSection } from './hero'
 import { generateTestimonialSection } from './testimonial'
 import {SiteContent} from '@/types/site' 
 
-export async function generateHTML(props: SiteContent, bucketName: string) {
+export async function generateHTML(props: SiteContent, bucketName: string, hasSSL: boolean) {
   
   const {
     colors,
@@ -78,9 +78,15 @@ export async function generateHTML(props: SiteContent, bucketName: string) {
   const footerHTML = generateFooter({ copywrite, colors })
 
   const timestamp = Date.now();
-  const cssUrl = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/style.css?${timestamp}`;
-
-  const websiteUrl = `http://${bucketName}.s3-website.${process.env.AWS_REGION}.amazonaws.com`
+  let cssUrl
+  let websiteUrl
+  if(hasSSL){
+    cssUrl = `https://${bucketName}/style.css?${timestamp}`;
+    websiteUrl = `https://${bucketName}`
+  } else {
+    cssUrl = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/style.css?${timestamp}`;
+    websiteUrl = `http://${bucketName}.s3-website.${process.env.AWS_REGION}.amazonaws.com`
+  }
 
   const html = `
       <!DOCTYPE html>
