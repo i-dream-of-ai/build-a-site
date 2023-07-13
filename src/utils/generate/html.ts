@@ -35,6 +35,9 @@ export async function generateHTML(props: SiteContent, bucketName: string, hasSS
     metaAuthor
   } = props
 
+  let cssUrl
+  let websiteUrl
+
   //const navbarHTML = generateNavbar({title, navbarItems, colors});
 
   const heroHTML = generateHeroSection({
@@ -77,9 +80,7 @@ export async function generateHTML(props: SiteContent, bucketName: string, hasSS
 
   const footerHTML = generateFooter({ copywrite, colors })
 
-  const timestamp = Date.now();
-  let cssUrl
-  let websiteUrl
+  const timestamp = Date.now()
   if(hasSSL){
     cssUrl = `https://${bucketName}/style.css?${timestamp}`;
     websiteUrl = `https://${bucketName}`

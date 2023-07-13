@@ -206,7 +206,7 @@ export async function createStableDiffusionImage(args) {
           prompt: args.prompt,
           negative_prompt:
             args.negativePrompt ||
-            'sex, nude, breasts, butt, tits, sexy, naked',
+            'sex, nude, breasts, butt, tits, sexy, naked, text',
           width: args.width,
           height: args.height,
           samples: args.count || 1,

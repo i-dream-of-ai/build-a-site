@@ -100,18 +100,24 @@ export async function uploadImagesToS3(
           contentType = 'image/png'
         }
 
+        //create the image key
+        const imageKey = `${name}-${i}${extname(imageUrls[i])}`;
+
+        // Replace the image URL in the images object with the S3 URL
+        images[name][i] = imageKey;
+
         const params = {
           Bucket: bucketName,
-          Key: `${name}-${i}${extname(imageUrls[i])}`,
+          Key: imageKey,
           Body: imageBuffer,
           ContentType: contentType,
           CacheControl: 'max-age=31536000',
         }
         await s3Client.send(new PutObjectCommand(params))
-        // Replace the image URL in the images object with the S3 URL
-        images[name][i] = `${name}-${i}${extname(imageUrls[i])}`
+        
       }
     }
+    
     return images
   } catch (err) {
     console.error(`Error: ${err}`)

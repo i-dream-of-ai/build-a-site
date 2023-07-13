@@ -4,7 +4,6 @@ import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 import { createImages } from '@/utils/generate/images'
-import { getRandomInt } from '@/lib/utils'
 
 const dbName = process.env.MONGODB_DB
 
@@ -59,6 +58,8 @@ export async function POST(req: NextRequest) {
           bucketName: site.domain || site.bucketName,
         },
       ])
+      console.log('images',images)
+
     } catch (error) {
       if (error instanceof Error) {
         return NextResponse.json({ error: error.message }, { status: 500 })
@@ -70,18 +71,33 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    await uploadImagesToS3(images, site.domain || site.bucketName)
-
     const timestamp = Date.now();
 
     const keys = Object.keys(images);
+
+    let image = images[field][0];
+
+    //if theres no image its processing
+    if(!image){
+      return NextResponse.json(
+        {
+          message: 'Your image is being created by alien artisans of the highest caliber. This may take a minute or two. Once the task is completed, we will beam it into your account.',
+          image: { key: keys[0] + 'URL', value: image },
+        },
+        { status: 200 },
+      )
+    }
     
+    //update the images array with the S3 values
+    images = await uploadImagesToS3(images, site.domain || site.bucketName)
+
     let value 
     if(site.domain){
       value = `https://${site.domain}/`+images[keys[0]] + '?' + timestamp
     } else {
       value = `http://${site.bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/`+images[keys[0]] + '?' + timestamp
     }
+
 
     await collection.updateOne(
       {

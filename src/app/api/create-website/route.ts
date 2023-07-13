@@ -66,62 +66,61 @@ export async function POST(req: NextRequest) {
     // Set the bucket policy to allow public read access
     await setBucketPolicy(bucketName)
 
-    let images
-    try {
-      //create the images. this function uses Promise.all
-      images = await createImages([
-        {
-          generator: 'stable',
-          name: 'featureImage',
-          prompt: featureImagePrompt,
-          count: 1,
-          height: '512',
-          width: '512',
-          bucketName,
-        },
-        {
-          generator: 'stable',
-          name: 'aboutUsImage',
-          prompt: aboutUsImagePrompt,
-          count: 1,
-          height: '576',
-          width: '1024',
-          bucketName,
-        },
-        {
-          generator: 'stable',
-          name: 'testimonialImage',
-          prompt: testimonialImagePrompt,
-          count: 1,
-          height: '720',
-          width: '720',
-          bucketName,
-        },
-      ])
-    } catch (error) {
-      // Delete the HTML object
-      const deleteBucketResponse = await deleteBucket(bucketName)
-      console.log('deleteBucketResponse', deleteBucketResponse)
-      if (error instanceof Error) {
-        return NextResponse.json({ error: error.message }, { status: 500 })
-      } else {
-        return NextResponse.json(
-          { error: 'An unknown error occurred in generate images.' },
-          { status: 500 },
-        )
-      }
-    }
+    // let images
+    // try {
+    //   //create the images. this function uses Promise.all
+    //   images = await createImages([
+    //     {
+    //       generator: 'stable',
+    //       name: 'featureImage',
+    //       prompt: featureImagePrompt,
+    //       count: 1,
+    //       height: '512',
+    //       width: '512',
+    //       bucketName,
+    //     },
+    //     {
+    //       generator: 'stable',
+    //       name: 'aboutUsImage',
+    //       prompt: aboutUsImagePrompt,
+    //       count: 1,
+    //       height: '576',
+    //       width: '1024',
+    //       bucketName,
+    //     },
+    //     {
+    //       generator: 'stable',
+    //       name: 'testimonialImage',
+    //       prompt: testimonialImagePrompt,
+    //       count: 1,
+    //       height: '720',
+    //       width: '720',
+    //       bucketName,
+    //     },
+    //   ])
+    // } catch (error) {
+    //   // Delete the HTML object
+    //   const deleteBucketResponse = await deleteBucket(bucketName)
+    //   console.log('deleteBucketResponse', deleteBucketResponse)
+    //   if (error instanceof Error) {
+    //     return NextResponse.json({ error: error.message }, { status: 500 })
+    //   } else {
+    //     return NextResponse.json(
+    //       { error: 'An unknown error occurred in generate images.' },
+    //       { status: 500 },
+    //     )
+    //   }
+    // }
 
     //TODO: maybe add a check for the images, and add a placeholder if no image?
 
     //upload the generated image files to the bucket
-    await uploadImagesToS3(images, bucketName)
+    //await uploadImagesToS3(images, bucketName)
 
-    //use a timestamp to always bust cache
-    const timestamp = Date.now();
-    body.args.featureImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/featureImage-0.png?${timestamp}`
-    body.args.aboutUsImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/aboutUsImage-0.png?${timestamp}`
-    body.args.testimonialImageURL = `http://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/testimonialImage-0.png?${timestamp}`
+    //use a placeholder image
+    body.args.featureImageURL = `http://placeholder-buildasite.s3.us-west-1.amazonaws.com/dummy_1024x576_ffffff_cccccc_use-the-generate-image-button-on-the-edit-page.svg`
+    body.args.aboutUsImageURL = `http://placeholder-buildasite.s3.us-west-1.amazonaws.com/dummy_1024x576_ffffff_cccccc_use-the-generate-image-button-on-the-edit-page.svg`
+    body.args.testimonialImageURL = `http://placeholder-buildasite.s3.us-west-1.amazonaws.com/dummy_1024x576_ffffff_cccccc_use-the-generate-image-button-on-the-edit-page.svg`
 
     //generates the html using the content and templates
     //use false for hasSSL because we are using default http bucket

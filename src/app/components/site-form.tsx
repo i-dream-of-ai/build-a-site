@@ -178,8 +178,10 @@ export default function SiteForm({ id }: SiteProps) {
         toast.error(response.error)
         console.log(response)
       } else {
-        setSiteData({ ...siteData, [response.image.key]: response.image.value })
-        toast.success('Image generation successful.')
+        if(response.image.value ){
+          setSiteData({ ...siteData, [response.image.key]: response.image.value })
+        }
+        toast.success(response.message)
       }
       setIsGeneratingImage(false)
     } catch (error) {
@@ -321,9 +323,6 @@ export default function SiteForm({ id }: SiteProps) {
                   className="block w-full rounded-md border-0 bg-white/5 py-1.5 text-white shadow-sm ring-1 ring-inset ring-white/10 focus:ring-2 focus:ring-inset focus:ring-indigo-500 sm:text-sm sm:leading-6"
                 />
               </div>
-              <p className="mt-3 text-sm leading-6 text-gray-400">
-                Write a few sentences about yourself.
-              </p>
             </div>
           </div>
         </div>
@@ -421,7 +420,7 @@ export default function SiteForm({ id }: SiteProps) {
                         )
                       }
                     >
-                      Regenerate Image <IconRefresh className="w-5 h-5" />{' '}
+                      Generate Image <IconRefresh className="w-5 h-5" />{' '}
                     </button>
                     <img
                       className="rounded-md max-h-[512px]"
@@ -567,7 +566,7 @@ export default function SiteForm({ id }: SiteProps) {
                         )
                       }
                     >
-                      Regenerate Image <IconRefresh className="w-5 h-5" />{' '}
+                      Generate Image <IconRefresh className="w-5 h-5" />{' '}
                     </button>
                     <img
                       className="rounded-md max-w-[512px] aspect-auto w-full"
@@ -740,10 +739,10 @@ export default function SiteForm({ id }: SiteProps) {
                         )
                       }
                     >
-                      Regenerate Image <IconRefresh className="w-5 h-5" />{' '}
+                      Generate Image <IconRefresh className="w-5 h-5" />{' '}
                     </button>
                     <img
-                      className="rounded-md  max-h-[350px]"
+                      className="rounded-md  w-[350px] h-[350px] max-w-full object-cover"
                       src={siteData.testimonialImageURL}
                     />
                   </div>
@@ -1006,9 +1005,9 @@ export default function SiteForm({ id }: SiteProps) {
         </div>
       </div>
       <div className="text-sm m-2 text-gray-400">
-        Note: Images will not regenerate using the Update Site button. To
-        regenerate your images use the Regenerate Image buttons in the form
-        above.
+        Note: Images will not regenerate automatically using the Update Site button. To
+        regenerate your images use the Generate Image buttons in the form
+        above, then use the Update Site button.
       </div>
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button

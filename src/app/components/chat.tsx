@@ -28,10 +28,9 @@ interface Conversation {
 }
 
 export function Chat({ id, initialMessages, className }: ChatProps) {
+
   const scrollRef = useRef<HTMLDivElement>(null)
-
   const router = useRouter()
-
   const searchParams = useSearchParams()
   const convoId = searchParams.get('id')
 
@@ -162,7 +161,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
                     Get Started
                   </h2>
                   <p className="mt-1 text-sm leading-6 text-neutral-400">
-                    We just need some basic information about your business.
+                    We just need some basic information about your business. Once your site has been generated, you can edit the content and generate the images using the sites edit form.
                   </p>
 
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -262,7 +261,7 @@ export function Chat({ id, initialMessages, className }: ChatProps) {
         )}
       </div>
       <div className={`${isLoading ? "w-full relative":"hidden"}`}>
-      <div className='absolute left-7 bottom-1 h-5 animate-pulse'>Using Alien Tech to generate content...</div>
+        {/* <div className='absolute left-7 bottom-1 h-5 animate-pulse'>Using Alien Tech to generate content...</div> */}
           <div className='animate-ufo animate-pulse h-5 mx-auto bg-gradient-to-r from-blue-900 via-purple-800 to-purple-600' />
       </div>
 

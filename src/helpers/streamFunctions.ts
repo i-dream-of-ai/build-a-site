@@ -88,8 +88,6 @@ export const runFunction = async (
 
       const content = await createSite(args)
 
-      //console.log('createSite content: ', content)
-
       messages.push(
         {
           role: 'function',
@@ -99,7 +97,7 @@ export const runFunction = async (
         {
           role: 'system',
           content:
-            'Site generated successfully. If a URL was not provided for the website, there was an error and you should inform the user of it. Do not make a URL up. If you received a URL then inform the user they can find a list of their sites on the sites page located at "/sites" and link it.',
+            'Site generated successfully. If a URL was not provided for the website, there was an error and you should inform the user of it. Do not make a URL up. If we recieved a URL from AWS, then inform the user they can edit their site content, and generate the image in the edit page. They can find thier site in the list of their sites on the Site page "/sites".',
         },
       )
     } catch (error) {

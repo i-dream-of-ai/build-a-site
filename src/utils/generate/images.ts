@@ -74,7 +74,6 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
             }
           } else if (generator === 'stable') {
             const imageURL = fetchResponse.output[0]
-
             if (imageURL) {
               images[name].push(imageURL)
             } else {
@@ -87,7 +86,7 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
                 { upsert: true },
               )
               images[name].push('')
-              //throw new Error(`Your image is being created by alien artisans of the highest caliber. This may take a minute or two. Once the task is completed, we will beam it into your account. ${name}`)
+
             }
           }
         } else {
