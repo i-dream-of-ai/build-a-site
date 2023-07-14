@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
       }
 
       const res = await sitesCollection.updateOne({bucketName: trackData.bucketName},{
-        $set: siteData
+        $set: {content: siteData}
       })
 
       const images: { [key: string]: string[] } = {};
