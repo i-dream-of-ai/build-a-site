@@ -73,6 +73,9 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
               throw new Error(`Image data is undefined for name ${name}`)
             }
           } else if (generator === 'stable') {
+            if(fetchResponse.status === 'failed'){
+              return {error: `Image generation failed for name ${name}. Please try again.`} 
+            }
             const imageURL = fetchResponse.output[0]
             if (imageURL) {
               images[name].push(imageURL)
@@ -85,6 +88,7 @@ export async function createImages(imagePrompts: ImagePrompt[] = []) {
                 { $set: { ...fetchResponse } },
                 { upsert: true },
               )
+              console.log('fetchResponse',fetchResponse)
               images[name].push('')
 
             }

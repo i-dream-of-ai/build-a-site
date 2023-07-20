@@ -70,6 +70,10 @@ export async function POST(req: NextRequest) {
         )
       }
     }
+    
+    if(images.error){
+      return NextResponse.json({ error: images.error }, { status: 500 })
+    }
 
     const timestamp = Date.now();
 
