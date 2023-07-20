@@ -54,6 +54,21 @@ To use Build-a-Site AI, follow these steps:
 
 3. After setting up the `.env` file, you can start the application with `npm run start`.
 
+## Technologies Used
+
+This project utilizes a number of cutting-edge libraries and services:
+
+- [OpenAI API](https://openai.com/): Used for generating website content.
+- [Stable Diffusion AI](https://stablediffusion.ai/): Used for generating images.
+- [TailwindCSS](https://tailwindcss.com/): A utility-first CSS framework used for styling the application.
+- [PostCSS](https://postcss.org/): A tool for transforming CSS with JavaScript.
+- [AWS S3](https://aws.amazon.com/s3/): Used for storing and serving the generated website content.
+- [Cloudflare](https://www.cloudflare.com/): Used for managing domains.
+- [NextAuth.js](https://next-auth.js.org/): A complete open source authentication solution for Next.js applications.
+- [MongoDB](https://www.mongodb.com/): A source-available cross-platform document-oriented database program.
+- [SendGrid](https://sendgrid.com/): A cloud-based SMTP provider that allows you to send email without having to maintain email servers.
+- [Stripe](https://stripe.com/): Online payment processing for internet businesses.
+
 ## Contributing to Build-a-Site AI
 
 Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/i-dream-of-ai/build-a-site/issues). You can also take a look at the contributing guide.
