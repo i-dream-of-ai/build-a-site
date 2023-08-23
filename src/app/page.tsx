@@ -53,7 +53,7 @@ export default async function Page() {
 
       <AlienInvasion />
 
-      <script async defer type="text/javascript" src="https://www.autobots-ai.com/chat-widget.js" data-token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJodHRwczovL2F1dG9ib3RzLWFpLmNvbSIsImNoYXRib3QiOiJ0ZXN0ZXIiLCJpYXQiOjE2OTI3NzA5NDgsImV4cCI6MTcyNDMyODU0OH0.rUcLdbeJXLAbQDmZ7_-hcks5Cv8EjKTSkikyP7K_36o"  data-agent="" data-welcome=""/>
+      <script async defer type="text/javascript" src="https://www.autobots-ai.com/chat-widget.js" data-token="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkb21haW4iOiJodHRwczovL2J1aWxkYXNpdGUuYWkiLCJjaGF0Ym90IjoidGVzdGVyIiwiaWF0IjoxNjkyNzgwMjA5LCJleHAiOjE3MjQzMzc4MDl9.LY8uoLs8-WYDXv7UcryuNGIPUUITbgWMeX4XtppEvGc"  data-agent="" data-welcome=""/>
     </div>
   )
 }
