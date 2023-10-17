@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import clientPromise from '@/lib/mongodb'
-import { OpenAIModels } from '@/types/openai'
+import { OpenAIModels } from '@/old.types/openai'
 
 export const users = {
   authenticate,

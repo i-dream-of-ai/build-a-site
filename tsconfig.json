@@ -9,7 +9,7 @@
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -20,7 +20,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/components/*": ["./src/app/components/*"]
     }
   },
   "include": [
@@ -28,14 +29,25 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/app/components/NavBar.jsx",
-    "src/utils/generate/html.ts",
-    "src/app/api/create-website/route.ts",
-    "src/app/old.dashboard/page.jsx",
-    "src/lib/mongodb.ts",
-    "src/app/api/user/index.js",
-    "src/app/api/chat/route.js",
-    "src/ui/alien-invasion.js"
+    "src/app/(app)/layout.jsx",
+    "src/app/(app)/history/page.tsx",
+    "src/app/lib/chatbot.js",
+    "src/app/(marketing)/pricing/page.js",
+    "src/app/(app)/billing/page.js",
+    "src/app/api/change-plan/route.js",
+    "src/app/(app)/billing/CheckoutButton.jsx",
+    "src/app/api/subscribe/route.js",
+    "src/app/lib/langchain.js",
+    "src/app/api/contacts/route.js",
+    "src/app/api/conversation/save-completion/route.js",
+    "src/app/lib/zapier.js",
+    "src/app/components/app/ListZapierActions.jsx",
+    "src/app/(marketing)/page.jsx",
+    "src/app/lib/limits.js",
+    "src/app/components/marketing/Footer.jsx",
+    "src/app/api/generateUploadUrl/route.js",
+    "src/app/components/app/FileDetails.jsx",
+    "src/app/components/ui/ResetPasswordModal.jsx"
   ],
   "exclude": ["node_modules"]
 }

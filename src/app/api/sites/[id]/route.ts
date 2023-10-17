@@ -1,11 +1,11 @@
-import clientPromise from '@/lib/mongodb'
-import { deleteBucket } from '@/utils/s3/delete'
+import clientPromise from '@/app/lib/mongodb'
+import { deleteBucket } from '@/app/lib/s3/delete'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
+import { generateHTML } from '@/app/lib/generate/html'
+import { createBucket, setBucketPolicy, uploadCSSToS3, uploadHTMLToS3, uploadImagesToS3 } from '@/app/lib/s3'
+import { generateCSS } from '@/app/lib/generate/css'
 import { getToken } from 'next-auth/jwt'
-import { generateHTML } from '@/utils/generate/html'
-import { createBucket, setBucketPolicy, uploadCSSToS3, uploadHTMLToS3, uploadImagesToS3 } from '@/utils/s3'
-import { generateCSS } from '@/utils/generate/css'
 
 const dbName = process.env.MONGODB_DB
 export async function GET(
@@ -19,22 +19,11 @@ export async function GET(
     return NextResponse.json({ error: 'Error. ID not found.' }, { status: 400 })
   }
 
-  const token = await getToken({ req })
-  if (!token) {
-    console.error('Error. Session not found.')
-    return NextResponse.json(
-      { error: 'Error. Session not found.' },
-      { status: 400 },
-    )
-  }
+  const user = await getToken({req});
 
-  const user = token.user as any
-  if (!user) {
-    console.error('Error. User not found.')
-    return NextResponse.json(
-      { error: 'Error. User not found.' },
-      { status: 400 },
-    )
+  if (!user || !user?._id) {
+    console.log("User is required");
+    return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
   }
 
   try {
@@ -55,21 +44,15 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
-  const token = await getToken({ req })
-  if (!token) {
-    return NextResponse.json(
-      { error: 'Error. Session not found.' },
-      { status: 400 },
-    )
+  
+  const user = await getToken({req});
+
+  if (!user || !user?._id) {
+    console.log("User is required");
+    return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
   }
 
-  const user = token.user as any
-  if (!user) {
-    return NextResponse.json(
-      { error: 'Error. User not found.' },
-      { status: 400 },
-    )
-  }
+  const isAdmin = user.role === "admin";
 
   const { id } = params
   if (!id) {
@@ -80,12 +63,17 @@ export async function DELETE(
   }
 
   try {
-    const client = await clientPromise
-    const collection = client.db(dbName).collection('sites')
-    const siteResponse = await collection.findOne({
-      _id: new ObjectId(id),
-      userId: new ObjectId(user?._id),
-    })
+    let query = {} as {_id: ObjectId, userId: ObjectId}
+    query._id = new ObjectId(id);
+    
+    // Conditionally add the userId field to the query object if the user is not an admin
+    if (!isAdmin) {
+      query.userId = new ObjectId(user?._id);
+    }
+
+    const client = await clientPromise;
+    const collection = client.db(dbName).collection('sites');
+    const siteResponse = await collection.findOne(query);
 
     if (!siteResponse) {
       return NextResponse.json({ error: 'Site not found.' }, { status: 401 })
@@ -101,7 +89,7 @@ export async function DELETE(
     //delete index file and bucket
     const isDeleted = await deleteBucket(siteResponse.domain || siteResponse.bucketName)
 
-    if (isDeleted.error || !isDeleted.success) {
+    if (isDeleted.error) {
       return NextResponse.json({ error: isDeleted }, { status: 500 })
     }
 
@@ -110,7 +98,7 @@ export async function DELETE(
     // Respond with the stream
     return NextResponse.json(response, { status: 200 })
   } catch (error) {
-    console.error(error)
+    console.error('Delete Site Error: ',error)
     return NextResponse.json({ error: error }, { status: 500 })
   }
 }
@@ -119,25 +107,17 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } },
 ) {
+
+  const user = await getToken({req});
+
+  if (!user || !user?._id) {
+    console.log("User is required");
+    return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
+  }
+
   const { id } = params
 
   const { bucketName, domain, siteData } = await req.json()
-
-  const token = await getToken({ req })
-  if (!token) {
-    return NextResponse.json(
-      { error: 'Error. Session not found.' },
-      { status: 400 },
-    )
-  }
-
-  const user = token.user as any
-  if (!user) {
-    return NextResponse.json(
-      { error: 'Error. User not found.' },
-      { status: 400 },
-    )
-  }
 
   if (!id) {
     return NextResponse.json({ error: 'Site ID not found.' }, { status: 400 })
@@ -225,7 +205,7 @@ export async function PATCH(
           { returnDocument: 'after', session },
         )
     
-        if (!response.value) {
+        if (!response || !response.value) {
           await session.abortTransaction()
           session.endSession()
           return NextResponse.json({ error: 'Site not updated.' }, { status: 500 })
@@ -269,7 +249,7 @@ export async function PATCH(
         { returnDocument: 'after',session },
       )
   
-      if (!response.value) {
+      if (!response || !response.value) {
         await session.abortTransaction()
         session.endSession()
         return NextResponse.json({ error: 'Site not updated.' }, { status: 500 })

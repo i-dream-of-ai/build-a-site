@@ -1,23 +1,24 @@
-import clientPromise from '@/lib/mongodb'
-import { uploadImagesToS3 } from '@/utils/s3'
+import clientPromise from '@/app/lib/mongodb'
+import { uploadImagesToS3 } from '@/app/lib/s3'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { createImages } from '@/utils/generate/images'
+import { createImages } from '@/app/lib/generate/images'
 
 const dbName = process.env.MONGODB_DB
 
 export async function POST(req: NextRequest) {
-  const token: any = await getToken({ req })
 
-  if (!token || !token.user) {
+  const user = await getToken({ req })
+
+  if (!user || !user._id) {
     return NextResponse.json(
-      { error: 'Error. Session not found.' },
+      { error: 'Error. User not found.' },
       { status: 400 },
     )
   }
 
-  const userId = token.user._id
+  const userId = user._id
 
   const { generator, prompt, field, siteId, width, height } = await req.json()
 
@@ -49,16 +50,13 @@ export async function POST(req: NextRequest) {
       //create the images. this function uses Promise.all
       images = await createImages([
         {
-          generator: generator,
           name: field,
           prompt: prompt,
           count: 1,
-          width: width,
-          height: height,
-          bucketName: site.domain || site.bucketName,
+          width: '512',
+          height: '512',
         },
       ])
-      console.log('images',images)
 
     } catch (error) {
       if (error instanceof Error) {
@@ -78,19 +76,6 @@ export async function POST(req: NextRequest) {
     const timestamp = Date.now();
 
     const keys = Object.keys(images);
-
-    let image = images[field][0];
-
-    //if theres no image its processing
-    if(!image){
-      return NextResponse.json(
-        {
-          message: 'Your image is being created by alien artisans of the highest caliber. This may take a minute or two. Once the task is completed, we will beam it into your account.',
-          image: { key: keys[0] + 'URL', value: image },
-        },
-        { status: 200 },
-      )
-    }
     
     //update the images array with the S3 values
     images = await uploadImagesToS3(images, site.domain || site.bucketName)

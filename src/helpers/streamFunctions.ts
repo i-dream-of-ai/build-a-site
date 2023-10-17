@@ -1,5 +1,5 @@
-import { Message } from '@/types/chat'
-import { OpenAIModel } from '@/types/openai'
+import { Message } from '@/old.types/chat'
+import { OpenAIModel } from '@/old.types/openai'
 import { createSite } from '@/utils/functions'
 import { fetchOpenAi } from '@/utils/openai/fetch'
 

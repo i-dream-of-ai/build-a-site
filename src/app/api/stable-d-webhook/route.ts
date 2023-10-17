@@ -1,9 +1,9 @@
-import clientPromise from '@/lib/mongodb'
+import clientPromise from '@/app/lib/mongodb'
 
 import { NextRequest, NextResponse } from 'next/server'
 
-import { uploadHTMLToS3, uploadImagesToS3 } from '@/utils/s3'
-import { generateHTML } from '@/utils/generate/html'
+import { uploadHTMLToS3, uploadImagesToS3 } from '@/app/lib/s3'
+import { generateHTML } from '@/app/lib/generate/html'
 
 const dbName = process.env.MONGODB_DB
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
         returnDocument: 'after',
       },
     )
-    if (imageDoc.value && imageDoc.value.status === 'success') {
+    if (imageDoc && imageDoc.value && imageDoc.value.status === 'success') {
 
       const sitesCollection = client.db(dbName).collection('sites');;
       const site = await sitesCollection.findOne({bucketName: trackData.bucketName})

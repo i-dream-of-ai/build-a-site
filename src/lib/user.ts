@@ -1,14 +1,16 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { User, UserUpdates } from '@/types/user'
+import { User, UserUpdates } from '@/old.types/user'
 import { toast } from 'react-hot-toast'
 
 export const fetchProfile = async (id: string): Promise<User> => {
   try {
     const res = await fetch(`/api/user/${id}`)
+    const response = await res.json();
     if (!res.ok) {
-      throw new Error('Network response was not ok')
+      throw new Error(response.message)
     }
-    return await res.json()
+    return response;
+
   } catch (error: unknown) {
     if (error instanceof Error) {
       throw new Error(`Failed to fetch profile: ${error.message}`)

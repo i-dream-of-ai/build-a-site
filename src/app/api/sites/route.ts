@@ -1,30 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getToken } from 'next-auth/jwt'
-import clientPromise from '@/lib/mongodb'
+import clientPromise from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
-import { Site } from '@/types/site'
+import { Site } from '@/old.types/site'
 import { revalidateTag } from 'next/cache'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../auth/[...nextauth]/authOptions'
 
 const dbName = process.env.MONGODB_DB
 export const revalidate = 3
 
 export async function GET(req: NextRequest) {
-  const token = await getToken({ req })
-  if (!token) {
-    console.error('Error. Session not found.')
-    return NextResponse.json(
-      { error: 'Error. Session not found.' },
-      { status: 400 },
-    )
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    console.log("Unauthorized");
+    return NextResponse.json({message: "Unauthorized."}, { status: 403 });
   }
 
-  const user = token.user as any
-  if (!user) {
-    console.error('Error. User not found.')
-    return NextResponse.json(
-      { error: 'Error. User not found.' },
-      { status: 400 },
-    )
+  const { user } = session;
+  if (!user || !user?._id) {
+    console.log("User is required");
+    return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
   }
 
   const tag = req.nextUrl.searchParams.get('tag')

@@ -1,6 +1,6 @@
 import { getFunction, runFunction } from '@/helpers/streamFunctions'
-import { Message } from '../../types/chat'
-import { OpenAIModel } from '../../types/openai'
+import { Message } from '../../old.types/chat'
+import { OpenAIModel } from '../../old.types/openai'
 import { fetchOpenAi } from '../openai/fetch'
 
 import {

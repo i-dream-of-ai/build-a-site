@@ -1,10 +1,10 @@
-import clientPromise from '@/lib/mongodb'
+import clientPromise from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
-import { generateHTML } from '@/utils/generate/html'
-import { uploadHTMLToS3 } from '@/utils/s3'
-import { OpenAIModelID, OpenAIModels } from '@/types/openai'
+import { OpenAIModelID, OpenAIModels } from '@/old.types/openai'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '../../auth/[...nextauth]/authOptions'
 
 const dbName = process.env.MONGODB_DB
 export async function GET(
@@ -15,25 +15,20 @@ export async function GET(
 
   if (!id) {
     console.error('Error. ID not found.')
-    return NextResponse.json({ error: 'Error. ID not found.' }, { status: 400 })
+    return NextResponse.json({ message: 'Error. ID not found.' }, { status: 400 })
   }
 
-  const token = await getToken({ req })
-  if (!token) {
-    console.error('Error. Session not found.')
-    return NextResponse.json(
-      { error: 'Error. Session not found.' },
-      { status: 400 },
-    )
+  const session = await getServerSession(authOptions);
+
+  if (!session) {
+    console.log("Unauthorized");
+    return NextResponse.json({message: "Unauthorized."}, { status: 403 });
   }
 
-  const user = token.user as any
-  if (!user) {
-    console.error('Error. User not found.')
-    return NextResponse.json(
-      { error: 'Error. User not found.' },
-      { status: 400 },
-    )
+  const { user } = session;
+  if (!user || !user?._id) {
+    console.log("User is required");
+    return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
   }
 
   try {
@@ -50,8 +45,8 @@ export async function GET(
     delete user.password
 
     return NextResponse.json(user, { status: 200 })
-  } catch (error) {
-    return NextResponse.json({ error }, { status: 500 })
+  } catch (error:any) {
+    return NextResponse.json({ message: error.message }, { status: 500 })
   }
 }
 
@@ -148,7 +143,7 @@ export async function PATCH(
       { returnDocument: 'after' },
     )
 
-    if (!response.value) {
+    if (!response || !response.value) {
       return NextResponse.json({ error: 'User not updated.' }, { status: 500 })
     }
 

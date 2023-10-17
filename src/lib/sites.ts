@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { Site } from '@/types/site'
+import { Site } from '@/old.types/site'
 
 export const fetchSite = async (id: string): Promise<Site> => {
   try {
@@ -19,6 +19,22 @@ export const fetchSite = async (id: string): Promise<Site> => {
 export const fetchSites = async (): Promise<Site[]> => {
   try {
     const res = await fetch(`/api/sites`)
+    if (!res.ok) {
+      throw new Error('Network response was not ok')
+    }
+    const data = await res.json()
+    return data.sites
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(`Failed to fetch sites: ${error.message}`)
+    }
+    throw error
+  }
+}
+
+export const fetchAllSites = async (): Promise<Site[]> => {
+  try {
+    const res = await fetch(`/api/sites/all`)
     if (!res.ok) {
       throw new Error('Network response was not ok')
     }
@@ -92,11 +108,15 @@ export const useSite = (id: string, enabled: boolean) => {
   )
 }
 
-export const useSites = () => {
+export const useSites = ({type="user"}) => {
   return useQuery<Site[], Error>(
     ['sites'],
     () => {
-      return fetchSites()
+      if(type === "all"){
+        return fetchAllSites()
+      } else {
+        return fetchSites()
+      }
     },
     {
       onError: (error: unknown) => {

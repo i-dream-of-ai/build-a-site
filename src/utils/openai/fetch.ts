@@ -1,7 +1,7 @@
 import { generate_site } from '../functions'
 
-import { Message } from '../../types/chat'
-import { OpenAIModel } from '../../types/openai'
+import { Message } from '../../old.types/chat'
+import { OpenAIModel } from '../../old.types/openai'
 import { OpenAIError } from '../server'
 
 export const runtime = 'edge'

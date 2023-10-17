@@ -2,7 +2,7 @@ import { getServerSession } from 'next-auth'
 import { ObjectId } from 'mongodb'
 import clientPromise from '@/lib/mongodb'
 import { authOptions } from '@/app/api/auth/[...nextauth]/route'
-import { Site } from '@/types/site'
+import { Site } from '@/old.types/site'
 
 export const runtime = 'edge'
 
