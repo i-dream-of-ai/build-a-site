@@ -1,4 +1,4 @@
-import clientPromise from '@/lib/mongodb'
+import clientPromise from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
 export const conversations = {

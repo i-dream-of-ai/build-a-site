@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   const { user } = session;
-  if (!user || !user?.id) {
+  if (!user || !user?._id) {
     console.log("User is required");
     return NextResponse.json({message: "Unauthorized. User is required"}, { status: 403 });
   }
