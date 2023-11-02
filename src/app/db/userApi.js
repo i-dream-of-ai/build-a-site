@@ -2,18 +2,16 @@ import { ObjectId } from "mongodb";
 import { OpenAIModels } from "@/old.types/openai";
 import clientPromise from "@/app/lib/mongodb";
 import bcrypt from "bcryptjs";
+import crypto from 'crypto';
+import sgMail from '@sendgrid/mail';
 
-export const users = {
-  authenticate,
-  getAll,
-  getById,
-  getByEmail,
-  create,
-  update,
-  delete: _delete,
-};
+
 
 const dbName = process.env.MONGODB_DB;
+const emailFrom = process.env.EMAIL_FROM;
+const emailSubject = process.env.EMAIL_SUBJECT;
+const emailText = process.env.EMAIL_CONTENT_TXT;
+const domain = process.env.NEXT_PUBLIC_APP_URL;
 
 async function authenticate({ email, password }) {
   const client = await clientPromise;
@@ -138,3 +136,85 @@ async function _delete(id) {
   const userCollection = client.db(dbName).collection("users");
   return await userCollection.deleteOne({ _id: id });
 }
+
+async function saveToken(email){
+  const token = generateUniqueToken();
+  const client = await clientPromise;
+  const userCollection = client.db(dbName).collection("users");
+  const filter = { email: email };
+  const update = { $set: { resetToken: token, resetTokenExp: Date.now() + 3600000 } }; // token will expire in 1 hour
+  await userCollection.updateOne(filter, update, { upsert: true });
+
+  // Setup SendGrid
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+  // Email content
+  const msg = {
+    to: email,
+    from: emailFrom,
+    subject: emailSubject,
+    text: `${emailText}${domain}/verify?email=${email}&token=${token}`,
+    html: `<strong>${emailText}</strong><br><br><a href="${domain}/verify?email=${email}&token=${token}">Reset Password</a>`,
+  };
+
+  // Send email
+  try {
+    await sgMail.send(msg);
+    console.log('Email sent successfully');
+  } catch (error) {
+    console.error(`Email sending failed: ${error}`);
+  }
+}
+
+function generateUniqueToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+export const updatePassword = async (email, token, newpassword) => {
+  const client = await clientPromise;
+
+  const database = client.db(dbName);
+  const users = database.collection("users");
+
+  // Find the user with the given email and token
+  const user = await users.findOne({ email, resetToken: token });
+
+  if (!user) {
+    throw new Error("Invalid email or token");
+  }
+
+  // Check if the token has expired
+  if (user.resetTokenExp < Date.now()) {
+    throw new Error("Token has expired");
+  }
+
+  // Hash the new password before updating it
+  const hashedPassword = await bcrypt.hash(newpassword, 10);
+
+  // Update the user's password with the hashed password and remove resetToken and resetTokenExp
+  const result = await users.updateOne(
+      { email },
+      {
+        $set: { password: hashedPassword },
+        $unset: { resetToken: "", resetTokenExp: "" }
+      }
+  );
+
+  if (result.modifiedCount !== 1) {
+    throw new Error("Failed to update password");
+  }
+
+  return "/login";
+};
+
+export const users = {
+  authenticate,
+  getAll,
+  getById,
+  getByEmail,
+  create,
+  update,
+  delete: _delete,
+  saveToken,
+  updatePassword,
+};
